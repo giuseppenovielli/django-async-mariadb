@@ -8,7 +8,8 @@ The package declares:
 - Python `>=3.10`;
 - MariaDB 10.5 or newer, with 10.11 as the primary target;
 - `asyncmy >=0.2,<0.3`;
-- PyMySQL `>=1.1,<2` for the synchronous path.
+- `mysqlclient` `>=2.2,<3` for the synchronous path, with optional PyMySQL
+  `>=1.1,<2` fallback.
 
 Actual compatibility must be verified against the version matrix used by the
 project. The `<6.0` constraint excludes Django 6.0; it does not mean that

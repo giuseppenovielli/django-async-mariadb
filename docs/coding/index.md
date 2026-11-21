@@ -9,7 +9,8 @@ This documentation contains the rules that apply to the
 - Django `>=5.2,<6.0`.
 - MariaDB 10.11 as the primary target.
 - Async driver `asyncmy >=0.2,<0.3`.
-- Supporting sync driver PyMySQL `>=1.1,<2`.
+- Supporting sync driver `mysqlclient` `>=2.2,<3`, with optional PyMySQL
+  `>=1.1,<2` fallback.
 - Async path usable with ASGI.
 
 The package is a Django backend specialized for MariaDB. The async path uses

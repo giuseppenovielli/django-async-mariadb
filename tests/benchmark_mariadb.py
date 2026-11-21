@@ -18,7 +18,13 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
 
-import pymysql
+try:
+    import MySQLdb
+except ImportError:
+    import pymysql
+
+    pymysql.install_as_MySQLdb()
+    import MySQLdb
 
 
 LIBRARY_ROOT = Path(__file__).resolve().parents[1]
@@ -72,7 +78,7 @@ def _database_settings(name, engine):
 
 def _admin_connection():
     values = _database_base()
-    return pymysql.connect(
+    return MySQLdb.connect(
         host=values["HOST"],
         port=int(values["PORT"]),
         user=values["USER"],
@@ -143,16 +149,15 @@ def _print_environment():
     print("software.python=%s" % sys.version.split()[0])
     print("software.django=%s" % _package_version("Django"))
     print("software.asyncmy=%s" % _package_version("asyncmy"))
+    print("software.mysqlclient=%s" % _package_version("mysqlclient"))
     print("software.pymysql=%s" % _package_version("PyMySQL"))
     print("software.mariadb=%s" % mariadb_version)
 
 
 def _configure_django(schema):
     import django
-    import pymysql
     from django.conf import settings
 
-    pymysql.install_as_MySQLdb()
     settings.configure(
         SECRET_KEY="django-async-mariadb-benchmark",
         USE_TZ=True,

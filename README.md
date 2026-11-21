@@ -48,12 +48,18 @@ releases and are safe to upgrade to.
 ## Installation
 
 ```bash
-pip install django-async-mariadb
+pip install "django-async-mariadb[mysqlclient]"
 ```
 
-The package uses `asyncmy` for asynchronous connections and PyMySQL as the
-synchronous fallback. Connection pooling is enabled through the database
-`OPTIONS` setting.
+The package uses `asyncmy` for asynchronous connections and `mysqlclient` for
+the synchronous Django compatibility path. If a native client library cannot
+be installed, use the optional pure-Python fallback instead:
+
+```bash
+pip install "django-async-mariadb[pymysql]"
+```
+
+Connection pooling is enabled through the database `OPTIONS` setting.
 
 The package tracks Django's major and minor version — this line targets Django
 `5.2.x` — because a large part of the ORM layer is generated from

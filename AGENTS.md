@@ -5,7 +5,7 @@
 - Python 3.10+.
 - Django `>=5.2,<6.0`.
 - MariaDB 10.11 as the primary target.
-- Async driver `asyncmy` with sync PyMySQL fallback.
+- Async driver `asyncmy` with sync `mysqlclient` and optional PyMySQL fallback.
 
 ## Development rules
 

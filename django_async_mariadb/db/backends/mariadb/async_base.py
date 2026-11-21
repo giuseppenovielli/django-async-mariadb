@@ -13,8 +13,15 @@ from django.core.exceptions import ImproperlyConfigured
 
 try:
     import MySQLdb  # noqa: F401
-except ImportError:  # PyMySQL is a supported pure-Python fallback.
-    import pymysql
+except ImportError:  # PyMySQL is an optional pure-Python fallback.
+    try:
+        import pymysql
+    except ImportError as exc:
+        raise ImproperlyConfigured(
+            "Install django-async-mariadb[mysqlclient] or "
+            "django-async-mariadb[pymysql] for the synchronous Django "
+            "compatibility path."
+        ) from exc
 
     pymysql.install_as_MySQLdb()
 

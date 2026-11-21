@@ -117,8 +117,10 @@ poetry install --with dev,docs --all-extras
 ```
 
 ```{note}
-The main dependencies install `asyncmy` and PyMySQL. The test suite exercises
-both direct connections and pooled asyncmy connections. `--with dev,docs` adds the test
+The main dependencies install `asyncmy`. Install the recommended `mysqlclient`
+extra for the synchronous path; PyMySQL is available through the optional
+`pymysql` fallback extra. The test suite exercises both direct connections and
+pooled asyncmy connections. `--with dev,docs` adds the test
 tooling and the Sphinx toolchain, so you can build the docs locally too.
 ```
 

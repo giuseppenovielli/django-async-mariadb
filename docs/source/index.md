@@ -12,7 +12,8 @@ Django's `a`-prefixed ORM methods (`aget`, `acreate`, …) are thin
 synchronous connection. **django-async-mariadb** replaces the database layer
 itself, so queries are issued on a real asyncio connection through
 {pypi}`asyncmy`, with async transactions, async cursors and optional
-connection pooling.
+connection pooling. The synchronous compatibility path uses
+{pypi}`mysqlclient`; PyMySQL is available as an optional pure-Python fallback.
 
 The project is **production ready**: the API is stable, and each release is
 pinned to the Django feature release it was generated against, so upgrades stay

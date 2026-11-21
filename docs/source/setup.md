@@ -3,11 +3,18 @@
 ## Installation
 
 ```bash
-pip install django-async-mariadb
+pip install "django-async-mariadb[mysqlclient]"
 ```
 
-The package uses {pypi}`asyncmy` for asynchronous connections and PyMySQL as
-the synchronous fallback. Enable pooling with the database `OPTIONS` setting.
+The package uses {pypi}`asyncmy` for asynchronous connections and
+{pypi}`mysqlclient` for the synchronous Django compatibility path. If the
+native client cannot be installed, use the optional pure-Python fallback:
+
+```bash
+pip install "django-async-mariadb[pymysql]"
+```
+
+Enable pooling with the database `OPTIONS` setting.
 
 ### Versioning
 

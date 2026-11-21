@@ -9,7 +9,13 @@ import os
 import uuid
 from pathlib import Path
 
-import pymysql
+try:
+    import MySQLdb
+except ImportError:
+    import pymysql
+
+    pymysql.install_as_MySQLdb()
+    import MySQLdb
 
 
 LIBRARY_ROOT = Path(__file__).resolve().parents[1]
@@ -126,7 +132,7 @@ def _database_settings(name):
 
 def _admin_connection():
     values = _dotenv_values()
-    return pymysql.connect(
+    return MySQLdb.connect(
         host=values.get("DB_HOST", "127.0.0.1"),
         port=int(values.get("DB_PORT", "3306")),
         user=values.get("DB_USER", "root"),
