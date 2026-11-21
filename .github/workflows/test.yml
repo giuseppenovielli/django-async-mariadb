@@ -171,4 +171,8 @@ jobs:
     - name: Test on Python ${{ matrix.python-version }}
       run: |
         source .venv/bin/activate
-        cd tests && PYTHONPATH=..:. python manage.py test
+        export PYTHONPATH=tests:.
+        python -m django check --settings=tests.settings
+        python -m unittest -v tests.test_backend tests.utils.test_connection
+        python -m tests.mariadb_integration_runner
+        ASYNC_MARIADB_POOL=1 python -m tests.mariadb_integration_runner
