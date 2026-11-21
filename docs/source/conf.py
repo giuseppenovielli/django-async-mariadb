@@ -72,7 +72,7 @@ autosectionlabel_maxdepth = 3
 extlinks = {
     # `pypi` is intentionally absent: sphinx_issues already registers that
     # role, and redefining it here emits an "already registered" warning.
-    "djangodoc": ("https://docs.djangoproject.com/en/stable/%s", "%s"),
+    "djangodoc": ("https://docs.djangoproject.com/en/5.2/%s", "%s"),
 }
 
 issues_github_path = "giuseppenovielli/django_async_mariadb"
@@ -80,10 +80,9 @@ issues_github_path = "giuseppenovielli/django_async_mariadb"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "django": (
-        "https://docs.djangoproject.com/en/stable/",
-        "https://docs.djangoproject.com/en/stable/_objects/",
+        "https://docs.djangoproject.com/en/5.2/",
+        "https://docs.djangoproject.com/en/5.2/_objects/",
     ),
-    "asyncmy": ("https://github.com/long2ice/asyncmy", None),
 }
 
 htmlhelp_basename = "djangoasyncbackenddoc"

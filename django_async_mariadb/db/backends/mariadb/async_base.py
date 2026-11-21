@@ -6,7 +6,6 @@ flags, schema editor, introspection, and migration support; this module only
 replaces the connection and cursor boundary for async callers.
 """
 
-import inspect
 import re
 
 from django.core.exceptions import ImproperlyConfigured

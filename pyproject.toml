@@ -111,6 +111,11 @@ exclude = [
     "django_async_mariadb/db/models/sql/subqueries.py",
 ]
 extend-ignore = ["S001"]
+per-file-ignores = [
+    "tests/benchmark_mariadb.py:T001,E501",
+    "tests/mariadb_integration_runner.py:E402,E501,T001",
+    "tests/test_backend.py:E402,E501",
+]
 
 [tool.bandit]
 exclude_dirs = [

@@ -203,8 +203,6 @@ class ValuesListIterable(BaseIterable):
         ):
             yield i
 
-
-
 class NamedValuesListIterable(ValuesListIterable):
 
     async def __aiter__(self):
@@ -322,13 +320,11 @@ class QuerySet(AltersData):
                 await query_set._fetch_all()
             return query_set._result_cache[index]
 
-
         async def fetch_data_iter(query_set, index):
             if query_set._result_cache is None:
                 await query_set._fetch_all()
             for item in query_set._result_cache[index]:
                 yield item
-
 
         def get_data():
             if self._result_cache is not None:
