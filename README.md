@@ -1,7 +1,7 @@
 # Async Django ORM for MariaDB
 
 [![Django minimum 5.2 LTS](https://img.shields.io/badge/Django-5.2%20LTS%20(min)-0C4B33?logo=django&logoColor=white)](https://docs.djangoproject.com/en/5.2/)
-[![MariaDB minimum 10.11](https://img.shields.io/badge/MariaDB-10.11%20(min)-003545?logo=mariadb&logoColor=white)](https://mariadb.com/kb/en/mariadb-1011/)
+[![MariaDB minimum 10.5](https://img.shields.io/badge/MariaDB-10.5%2B%20(min)-003545?logo=mariadb&logoColor=white)](https://mariadb.com/kb/en/mariadb-105/)
 
 Async Django ORM and MariaDB database backend.
 
@@ -26,7 +26,7 @@ is pinned to the Django feature release it was generated against.
 | Package version | `6.1.5` | `5.2.0` |
 | Python | `>=3.12` | `3.10+` |
 | Django | `>=6.1` (`6.1.x`) | `>=5.2,<5.3` (`5.2.x`) |
-| Database backend | PostgreSQL | MariaDB `10.11` |
+| Database backend | PostgreSQL | MariaDB `10.5+` (`10.11` primary target) |
 | Async driver | `psycopg` 3 | `asyncmy` |
 | Async ORM | Original implementation | Original implementation adapted to Django 5.2 |
 | Source baseline | — | `django-async-backend` `6.1.5` |
