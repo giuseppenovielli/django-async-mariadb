@@ -1,5 +1,8 @@
 # Async Django ORM for MariaDB
 
+[![Django minimum 5.2 LTS](https://img.shields.io/badge/Django-5.2%20LTS%20(min)-0C4B33?logo=django&logoColor=white)](https://docs.djangoproject.com/en/5.2/)
+[![MariaDB minimum 10.11](https://img.shields.io/badge/MariaDB-10.11%20(min)-003545?logo=mariadb&logoColor=white)](https://mariadb.com/kb/en/mariadb-1011/)
+
 Async Django ORM and MariaDB database backend.
 
 Django's `a`-prefixed ORM methods (`aget`, `acreate`, …) are thin
