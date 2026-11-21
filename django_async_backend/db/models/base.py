@@ -1,4 +1,11 @@
-# This file was generated automatically. Do not modify it manually. (based on django 6.1)
+# This file was generated automatically. Do not modify it manually. (based on django 5.2)
+from django.db.models.base import ModelBase
+from django.utils.functional import classproperty
+from django_async_backend.db import async_connections
+from django_async_backend.db.models.deletion import Collector
+from django_async_backend.db.models.manager import AsyncManager
+from django_async_backend.db.transaction import async_atomic
+from django_async_backend.db.transaction import async_mark_for_rollback_on_error
 import copy
 import inspect
 import warnings
@@ -6,8 +13,9 @@ from collections import defaultdict
 from functools import partialmethod
 from itertools import chain
 
-import django
 from asgiref.sync import sync_to_async
+
+import django
 from django.apps import apps
 from django.conf import settings
 from django.core import checks
@@ -17,24 +25,11 @@ from django.core.exceptions import (
     FieldError,
     MultipleObjectsReturned,
     ObjectDoesNotExist,
-    ObjectNotUpdated,
     ValidationError,
 )
 from django.db import (
-    DJANGO_VERSION_PICKLE_KEY,
-    DatabaseError,
-    connection,
-    router,
-    transaction,
-)
-from django.db.models import (
-    NOT_PROVIDED,
-    ExpressionWrapper,
-    IntegerField,
-    Max,
-    Value,
-)
-from django.db.models.base import ModelBase
+    DJANGO_VERSION_PICKLE_KEY, DatabaseError, connection, router, transaction)
+from django.db.models import NOT_PROVIDED, ExpressionWrapper, IntegerField, Max, Value
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.deletion import CASCADE
 from django.db.models.expressions import DatabaseDefault
@@ -48,10 +43,7 @@ from django.db.models.fields.related import (
 from django.db.models.functions import Coalesce
 from django.db.models.manager import Manager
 from django.db.models.options import Options
-from django.db.models.query import (
-    F,
-    Q,
-)
+from django.db.models.query import F, Q
 from django.db.models.signals import (
     class_prepared,
     post_init,
@@ -59,26 +51,12 @@ from django.db.models.signals import (
     pre_init,
     pre_save,
 )
-from django.db.models.utils import (
-    AltersData,
-    make_model_tuple,
-)
+from django.db.models.utils import AltersData, make_model_tuple
+from django.utils.deprecation import RemovedInDjango60Warning
 from django.utils.encoding import force_str
-from django.utils.functional import classproperty
 from django.utils.hashable import make_hashable
-from django.utils.text import (
-    capfirst,
-    get_text_list,
-)
+from django.utils.text import capfirst, get_text_list
 from django.utils.translation import gettext_lazy as _
-
-from django_async_backend.db import async_connections
-from django_async_backend.db.models.deletion import Collector
-from django_async_backend.db.models.manager import AsyncManager
-from django_async_backend.db.transaction import (
-    async_atomic,
-    async_mark_for_rollback_on_error,
-)
 
 
 class AsyncModelMixin:
@@ -119,9 +97,13 @@ class AsyncModelMixin:
         manager = self.__class__._async_base_manager.db_manager(
             using, hints={"instance": self}
         )
-        db_instance = await manager.filter(pk=self._async_get_pk_val()).aget()
+        db_instance = await manager.filter(
+            pk=self._async_get_pk_val()
+        ).aget()
         for field in self._meta.concrete_fields:
-            setattr(self, field.attname, getattr(db_instance, field.attname))
+            setattr(
+                self, field.attname, getattr(db_instance, field.attname)
+            )
         self._state.fields_cache = {}
         self._prefetched_objects_cache = {}
         self._state.db = db_instance._state.db
@@ -132,39 +114,76 @@ class AsyncModelMixin:
 
     def _async_is_pk_set(self, meta=None):
         pk_val = self._async_get_pk_val(meta)
-
-        def _is_unset(value):
-            return (
-                value is None
-                # Empty value when db_default is used.
-                or isinstance(value, DatabaseDefault)
-            )
-
         return not (
-            _is_unset(pk_val)
-            or (
-                isinstance(pk_val, tuple) and any(_is_unset(f) for f in pk_val)
-            )
+            pk_val is None
+            or (isinstance(pk_val, tuple) and any(f is None for f in pk_val))
         )
 
+    # RemovedInDjango60Warning: When the deprecation ends, remove completely.
+    def _async_parse_save_params(self, *args, method_name, **kwargs):
+        defaults = {
+            "force_insert": False,
+            "force_update": False,
+            "using": None,
+            "update_fields": None,
+        }
+
+        warnings.warn(
+            f"Passing positional arguments to {method_name}() is deprecated",
+            RemovedInDjango60Warning,
+            stacklevel=3,
+        )
+        total_len_args = len(args) + 1  # include self
+        max_len_args = len(defaults) + 1
+        if total_len_args > max_len_args:
+            # Recreate the proper TypeError message from Python.
+            raise TypeError(
+                f"Model.{method_name}() takes from 1 to {max_len_args} positional "
+                f"arguments but {total_len_args} were given"
+            )
+
+        def get_param(param_name, param_value, arg_index):
+            if arg_index < len(args):
+                if param_value is not defaults[param_name]:
+                    # Recreate the proper TypeError message from Python.
+                    raise TypeError(
+                        f"Model.{method_name}() got multiple values for argument "
+                        f"'{param_name}'"
+                    )
+                return args[arg_index]
+
+            return param_value
+
+        return [get_param(k, v, i) for i, (k, v) in enumerate(kwargs.items())]
+
+    # RemovedInDjango60Warning: When the deprecation ends, replace with:
+    # def save(
+    #   self, *, force_insert=False, force_update=False, using=None, update_fields=None,
+    # ):
     async def async_save(
         self,
-        *,
+        *args,
         force_insert=False,
         force_update=False,
         using=None,
         update_fields=None,
     ):
+        # RemovedInDjango60Warning.
+        if args:
+            force_insert, force_update, using, update_fields = self._async_parse_save_params(
+                *args,
+                method_name="save",
+                force_insert=force_insert,
+                force_update=force_update,
+                using=using,
+                update_fields=update_fields,
+            )
 
-        await self._async_prepare_related_fields_for_save(
-            operation_name="save"
-        )
+        await self._async_prepare_related_fields_for_save(operation_name="save")
 
         using = using or router.db_for_write(self.__class__, instance=self)
         if force_insert and (force_update or update_fields):
-            raise ValueError(
-                "Cannot force both insert and updating in model saving."
-            )
+            raise ValueError("Cannot force both insert and updating in model saving.")
 
         deferred_non_generated_fields = {
             f.attname
@@ -195,16 +214,13 @@ class AsyncModelMixin:
             not force_insert
             and deferred_non_generated_fields
             and using == self._state.db
-            and self._async_is_pk_set()
         ):
             field_names = set()
             pk_fields = self._meta.pk_fields
             for field in self._meta.concrete_fields:
                 if field not in pk_fields and not hasattr(field, "through"):
                     field_names.add(field.attname)
-            loaded_fields = field_names.difference(
-                deferred_non_generated_fields
-            )
+            loaded_fields = field_names.difference(deferred_non_generated_fields)
             if loaded_fields:
                 update_fields = frozenset(loaded_fields)
 
@@ -314,9 +330,7 @@ class AsyncModelMixin:
                 and getattr(self, parent._meta.pk.attname) is None
                 and getattr(self, field.attname) is not None
             ):
-                setattr(
-                    self, parent._meta.pk.attname, getattr(self, field.attname)
-                )
+                setattr(self, parent._meta.pk.attname, getattr(self, field.attname))
             if (parent_updated := updated_parents.get(parent)) is None:
                 parent_inserted = await self._async_save_parents(
                     cls=parent,
@@ -329,8 +343,7 @@ class AsyncModelMixin:
                     cls=parent,
                     using=using,
                     update_fields=update_fields,
-                    force_insert=parent_inserted
-                    or issubclass(parent, force_insert),
+                    force_insert=parent_inserted or issubclass(parent, force_insert),
                 )
                 if not updated:
                     inserted = True
@@ -339,9 +352,7 @@ class AsyncModelMixin:
                 inserted = True
             # Set the parent's PK value to self.
             if field:
-                setattr(
-                    self, field.attname, self._async_get_pk_val(parent._meta)
-                )
+                setattr(self, field.attname, self._async_get_pk_val(parent._meta))
                 # Since we didn't have an instance of the parent handy set
                 # attname directly, bypassing the descriptor. Invalidate
                 # the related object cache, in case it's been accidentally
@@ -375,16 +386,12 @@ class AsyncModelMixin:
                 if f.name in update_fields or f.attname in update_fields
             ]
 
-        if not self._async_is_pk_set(meta) and not isinstance(
-            getattr(self, meta.pk.attname), DatabaseDefault
-        ):
+        if not self._async_is_pk_set(meta):
             pk_val = meta.pk.get_pk_value_on_save(self)
             setattr(self, meta.pk.attname, pk_val)
         pk_set = self._async_is_pk_set(meta)
         if not pk_set and (force_update or update_fields):
-            raise ValueError(
-                "Cannot force an update in save() with no primary key."
-            )
+            raise ValueError("Cannot force an update in save() with no primary key.")
         updated = False
         # Skip an UPDATE when adding an instance and primary key has a default.
         if (
@@ -392,61 +399,29 @@ class AsyncModelMixin:
             and not force_insert
             and not force_update
             and self._state.adding
-            and all(
-                f.has_default() or f.has_db_default() for f in meta.pk_fields
-            )
+            and all(f.has_default() or f.has_db_default() for f in meta.pk_fields)
         ):
             force_insert = True
-        # If possible, try an UPDATE. If that doesn't update anything, do an
-        # INSERT.
+        # If possible, try an UPDATE. If that doesn't update anything, do an INSERT.
         if pk_set and not force_insert:
             base_qs = cls._async_base_manager.using(using)
             values = [
                 (
                     f,
                     None,
-                    (
-                        getattr(self, f.attname)
-                        if raw
-                        else f.pre_save(self, False)
-                    ),
+                    (getattr(self, f.attname) if raw else f.pre_save(self, False)),
                 )
                 for f in non_pks_non_generated
             ]
             forced_update = update_fields or force_update
             pk_val = self._async_get_pk_val(meta)
-            returning_fields = [
-                f
-                for f in meta.local_concrete_fields
-                if (
-                    f.generated
-                    and f.referenced_fields.intersection(non_pks_non_generated)
-                )
-            ]
-            for field, _model, value in values:
-                if (
-                    update_fields is None or field.name in update_fields
-                ) and hasattr(value, "resolve_expression"):
-                    returning_fields.append(field)
-            results = await self._async_do_update(
-                base_qs,
-                using,
-                pk_val,
-                values,
-                update_fields,
-                forced_update,
-                returning_fields,
+            updated = await self._async_do_update(
+                base_qs, using, pk_val, values, update_fields, forced_update
             )
-            if updated := bool(results):
-                self._async_assign_returned_values(
-                    results[0], returning_fields
-                )
-            elif force_update:
-                raise self.NotUpdated("Forced update did not affect any rows.")
-            elif update_fields:
-                raise self.NotUpdated(
-                    "Save with update_fields did not affect any rows."
-                )
+            if force_update and not updated:
+                raise DatabaseError("Forced update did not affect any rows.")
+            if update_fields and not updated:
+                raise DatabaseError("Save with update_fields did not affect any rows.")
         if not updated:
             if meta.order_with_respect_to:
                 # If this is a model with an order_with_respect_to
@@ -454,6 +429,7 @@ class AsyncModelMixin:
                 field = meta.order_with_respect_to
                 filter_args = field.get_filter_kwargs_for_object(self)
                 self._order = (
+                    (
                     await cls._async_base_manager.using(using)
                     .filter(**filter_args)
                     .aaggregate(
@@ -466,30 +442,13 @@ class AsyncModelMixin:
                         ),
                     )
                 )["_order__max"]
-            insert_fields = [
+                )
+            fields = [
                 f
                 for f in meta.local_concrete_fields
                 if not f.generated and (pk_set or f is not meta.auto_field)
             ]
-            returning_fields = list(meta.db_returning_fields)
-            can_return_columns_from_insert = async_connections[
-                using
-            ].features.can_return_columns_from_insert
-            for field in insert_fields:
-                value = (
-                    getattr(self, field.attname)
-                    if raw
-                    else field.pre_save(self, add=True)
-                )
-                if hasattr(value, "resolve_expression"):
-                    if field not in returning_fields:
-                        returning_fields.append(field)
-                elif (
-                    field.db_returning
-                    and not can_return_columns_from_insert
-                    and not (pk_set and field is meta.auto_field)
-                ):
-                    returning_fields.remove(field)
+            returning_fields = meta.db_returning_fields
             results = await self._async_do_insert(
                 cls._async_base_manager,
                 using,
@@ -498,49 +457,35 @@ class AsyncModelMixin:
                 raw,
             )
             if results:
-                self._async_assign_returned_values(
-                    results[0], returning_fields
-                )
+                for value, field in zip(results[0], returning_fields):
+                    setattr(self, field.attname, value)
         return updated
 
-    async def _async_do_update(
-        self,
-        base_qs,
-        using,
-        pk_val,
-        values,
-        update_fields,
-        forced_update,
-        returning_fields,
-    ):
+    async def _async_do_update(self, base_qs, using, pk_val, values, update_fields, forced_update):
         filtered = base_qs.filter(pk=pk_val)
         if not values:
             # We can end up here when saving a model in inheritance chain where
             # update_fields doesn't target any field in current model. In that
-            # case we just say the update succeeded. Another case ending up
-            # here is a model with just PK - in that case check that the PK
-            # still exists.
-            if update_fields is not None or await filtered.aexists():
-                return [()]
-            return []
+            # case we just say the update succeeded. Another case ending up here
+            # is a model with just PK - in that case check that the PK still
+            # exists.
+            return update_fields is not None or await filtered.aexists()
         if self._meta.select_on_save and not forced_update:
-            # It may happen that the object is deleted from the DB right after
-            # this check, causing the subsequent UPDATE to return zero matching
-            # rows. The same result can occur in some rare cases when the
-            # database returns zero despite the UPDATE being executed
-            # successfully (a row is matched and updated). In order to
-            # distinguish these two cases, the object's existence in the
-            # database is again checked for if the UPDATE query returns 0.
-            if not await filtered.aexists():
-                return []
-            if results := await filtered._update(values, returning_fields):
-                return results
-            return [()] if await filtered.aexists() else []
-        return await filtered._update(values, returning_fields)
+            return (
+                await filtered.aexists()
+                and
+                # It may happen that the object is deleted from the DB right after
+                # this check, causing the subsequent UPDATE to return zero matching
+                # rows. The same result can occur in some rare cases when the
+                # database returns zero despite the UPDATE being executed
+                # successfully (a row is matched and updated). In order to
+                # distinguish these two cases, the object's existence in the
+                # database is again checked for if the UPDATE query returns 0.
+                (await filtered._update(values) > 0 or await filtered.aexists())
+            )
+        return await filtered._update(values) > 0
 
-    async def _async_do_insert(
-        self, manager, using, fields, returning_fields, raw
-    ):
+    async def _async_do_insert(self, manager, using, fields, returning_fields, raw):
         return await manager._insert(
             [self],
             fields=fields,
@@ -549,18 +494,7 @@ class AsyncModelMixin:
             raw=raw,
         )
 
-    def _async_assign_returned_values(self, returned_values, returning_fields):
-        returning_fields_iter = iter(returning_fields)
-        for value, field in zip(returned_values, returning_fields_iter):
-            setattr(self, field.attname, value)
-        # Defer all fields that were meant to be updated with their database
-        # resolved values but couldn't as they are effectively stale.
-        for field in returning_fields_iter:
-            self.__dict__.pop(field.attname, None)
-
-    async def _async_prepare_related_fields_for_save(
-        self, operation_name, fields=None
-    ):
+    async def _async_prepare_related_fields_for_save(self, operation_name, fields=None):
         # Ensure that a model instance without a PK hasn't been assigned to
         # a ForeignKey, GenericForeignKey or OneToOneField on this model. If
         # the field is nullable, allowing the save would result in silent data

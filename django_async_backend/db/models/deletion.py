@@ -1,39 +1,19 @@
-# This file was generated automatically. Do not modify it manually. (based on django 6.1)
-from collections import (
-    Counter,
-    defaultdict,
-)
-from functools import (
-    partial,
-    reduce,
-)
+# This file was generated automatically. Do not modify it manually. (based on django 5.2)
 from inspect import iscoroutinefunction
-from itertools import chain
-from operator import (
-    attrgetter,
-    or_,
-)
-
 from django.db.models import deletion as django_deletion
-from django.db.models import (
-    query_utils,
-    signals,
-)
-from django.db.models.deletion import SKIP_COLLECTION as _SYNC_SKIP_COLLECTION
-from django.db.models.deletion import (
-    DatabaseOnDelete,
-    ProtectedError,
-    RestrictedError,
-)
-
+from django.db.models.deletion import ProtectedError
+from django.db.models.deletion import RestrictedError
 from django_async_backend.db import async_connections
+from django_async_backend.db.transaction import async_atomic
+from django_async_backend.db.transaction import async_mark_for_rollback_on_error
 from django_async_backend.db.models import sql
 from django_async_backend.db.models.query import QuerySet
-from django_async_backend.db.transaction import (
-    async_atomic,
-    async_mark_for_rollback_on_error,
-)
 from django_async_backend.utils.contenttypes import aget_for_model
+from collections import Counter, defaultdict
+from functools import partial, reduce
+from itertools import chain
+from operator import attrgetter, or_
+from django.db.models import query_utils, signals
 
 
 async def _CASCADE(collector, field, sub_objs, using):
@@ -44,10 +24,7 @@ async def _CASCADE(collector, field, sub_objs, using):
         nullable=field.null,
         fail_on_restricted=False,
     )
-    if (
-        field.null
-        and not async_connections[using].features.can_defer_constraint_checks
-    ):
+    if field.null and not async_connections[using].features.can_defer_constraint_checks:
         collector.add_field_update(field, None, sub_objs)
 
 
@@ -101,35 +78,21 @@ async def _DO_NOTHING(collector, field, sub_objs, using):
     pass
 
 
-_DB_CASCADE = DatabaseOnDelete("CASCADE", "DB_CASCADE", _CASCADE)
-_DB_SET_DEFAULT = DatabaseOnDelete("SET DEFAULT", "DB_SET_DEFAULT")
-_DB_SET_NULL = DatabaseOnDelete("SET NULL", "DB_SET_NULL")
-
-_SKIP_COLLECTION = frozenset(
-    [_DO_NOTHING, _DB_CASCADE, _DB_SET_DEFAULT, _DB_SET_NULL]
-)
-
-
 def _get_candidate_relations_to_delete(opts):
-    # The candidate relations are the ones that come from N-1 and 1-1
-    # relations. N-N  (i.e., many-to-many) relations aren't candidates for
-    # deletion.
+    # The candidate relations are the ones that come from N-1 and 1-1 relations.
+    # N-N  (i.e., many-to-many) relations aren't candidates for deletion.
     return (
         f
         for f in opts.get_fields(include_hidden=True)
-        if f.auto_created
-        and not f.concrete
-        and (f.one_to_one or f.one_to_many)
+        if f.auto_created and not f.concrete and (f.one_to_one or f.one_to_many)
     )
 
 
 class Collector:
-    def __init__(self, using, origin=None, force_collection=False):
+    def __init__(self, using, origin=None):
         self.using = using
         # A Model or QuerySet object.
         self.origin = origin
-        # Force collecting objects for deletion on the Python-level.
-        self.force_collection = force_collection
         # Initially, {model: {instances}}, later values become lists.
         self.data = defaultdict(set)
         # {(field, value): [instances, …]}
@@ -161,9 +124,7 @@ class Collector:
         # deleting, and therefore do not affect the order in which objects have
         # to be deleted.
         if source is not None and not nullable:
-            self.add_dependency(
-                source, model, reverse_dependency=reverse_dependency
-            )
+            self.add_dependency(source, model, reverse_dependency=reverse_dependency)
         return new_objs
 
     def add_dependency(self, model, dependency, reverse_dependency=False):
@@ -192,16 +153,13 @@ class Collector:
     async def clear_restricted_objects_from_queryset(self, model, qs):
         if model in self.restricted_objects:
             objs = set(
-                [
-                    obj
-                    async for obj in qs.filter(
-                        pk__in=[
-                            obj.pk
-                            for objs in self.restricted_objects[model].values()
-                            for obj in objs
-                        ]
-                    )
-                ]
+                [obj async for obj in qs.filter(
+                    pk__in=[
+                        obj.pk
+                        for objs in self.restricted_objects[model].values()
+                        for obj in objs
+                    ]
+                )]
             )
             self.clear_restricted_objects_from_set(model, objs)
 
@@ -211,12 +169,7 @@ class Collector:
         ) or signals.post_delete.has_listeners(model)
 
     def can_fast_delete(self, objs, from_field=None):
-        if self.force_collection:
-            return False
-        if (
-            from_field
-            and from_field.remote_field.on_delete is not _SYNC_CASCADE
-        ):
+        if from_field and from_field.remote_field.on_delete is not _SYNC_CASCADE:
             return False
         if hasattr(objs, "_meta"):
             model = objs._meta.model
@@ -237,7 +190,7 @@ class Collector:
             and
             # Foreign keys pointing to this model.
             all(
-                related.field.remote_field.on_delete in _SYNC_SKIP_COLLECTION
+                related.field.remote_field.on_delete is DO_NOTHING
                 for related in _get_candidate_relations_to_delete(opts)
             )
             and (
@@ -312,23 +265,12 @@ class Collector:
         protected_objects = defaultdict(list)
         for related in _get_candidate_relations_to_delete(model._meta):
             # Preserve parent reverse relationships if keep_parents=True.
-            if (
-                keep_parents
-                and related.model._meta.concrete_model
-                in model._meta.all_parents
-            ):
+            if keep_parents and related.model in model._meta.all_parents:
                 continue
             field = related.field
             on_delete = _resolve_async_on_delete(field.remote_field.on_delete)
-            if on_delete in _SKIP_COLLECTION:
-                if self.force_collection and (
-                    forced_on_delete := getattr(
-                        on_delete, "forced_collector", None
-                    )
-                ):
-                    on_delete = forced_on_delete
-                else:
-                    continue
+            if on_delete == DO_NOTHING:
+                continue
             related_model = related.related_model
             if self.can_fast_delete(related_model, from_field=field):
                 model_fast_deletes[related_model].append(field)
@@ -348,25 +290,14 @@ class Collector:
                 ):
                     referenced_fields = set(
                         chain.from_iterable(
-                            (
-                                rf.attname
-                                for rf in rel.field.foreign_related_fields
-                            )
+                            (rf.attname for rf in rel.field.foreign_related_fields)
                             for rel in _get_candidate_relations_to_delete(
                                 related_model._meta
                             )
                         )
                     )
-                    sub_objs = sub_objs._only(
-                        *tuple(
-                            referenced_fields.union(
-                                _parent_chain_fields(related_model._meta)
-                            )
-                        )
-                    )
-                if getattr(on_delete, "lazy_sub_objs", False) or [
-                    obj async for obj in sub_objs
-                ]:
+                    sub_objs = sub_objs._only(*tuple(referenced_fields.union(_parent_chain_fields(related_model._meta))))
+                if getattr(on_delete, "lazy_sub_objs", False) or [obj async for obj in sub_objs]:
                     try:
                         await on_delete(self, field, sub_objs, self.using)
                     except ProtectedError as error:
@@ -385,30 +316,21 @@ class Collector:
         for related_model, related_fields in model_fast_deletes.items():
             batches = self.get_del_batches(new_objs, related_fields)
             for batch in batches:
-                sub_objs = self.related_objects(
-                    related_model, related_fields, batch
-                )
+                sub_objs = self.related_objects(related_model, related_fields, batch)
                 self.fast_deletes.append(sub_objs)
         for field in model._meta.private_fields:
             if hasattr(field, "bulk_related_objects"):
                 # It's something like generic foreign key.
-                sub_objs = await _abulk_related_objects(
-                    field, new_objs, self.using
-                )
+                sub_objs = await _abulk_related_objects(field, new_objs, self.using)
                 await self.collect(
-                    sub_objs,
-                    source=model,
-                    nullable=True,
-                    fail_on_restricted=False,
+                    sub_objs, source=model, nullable=True, fail_on_restricted=False
                 )
 
         if fail_on_restricted:
             # Raise an error if collected restricted objects (RESTRICT) aren't
             # candidates for deletion also collected via CASCADE.
             for related_model, instances in self.data.items():
-                self.clear_restricted_objects_from_set(
-                    related_model, instances
-                )
+                self.clear_restricted_objects_from_set(related_model, instances)
             for qs in self.fast_deletes:
                 await self.clear_restricted_objects_from_queryset(qs.model, qs)
             if self.restricted_objects.values():
@@ -416,10 +338,7 @@ class Collector:
                 for related_model, fields in self.restricted_objects.items():
                     for field, objs in fields.items():
                         if objs:
-                            key = "'%s.%s'" % (
-                                related_model.__name__,
-                                field.name,
-                            )
+                            key = "'%s.%s'" % (related_model.__name__, field.name)
                             restricted_objects[key] += objs
                 if restricted_objects:
                     raise RestrictedError(
@@ -435,15 +354,10 @@ class Collector:
 
     def related_objects(self, related_model, related_fields, objs):
         predicate = query_utils.Q.create(
-            [
-                (f"{related_field.name}__in", objs)
-                for related_field in related_fields
-            ],
+            [(f"{related_field.name}__in", objs) for related_field in related_fields],
             connector=query_utils.Q.OR,
         )
-        return related_model._async_base_manager.using(self.using).filter(
-            predicate
-        )
+        return related_model._async_base_manager.using(self.using).filter(predicate)
 
     def instances_with_model(self):
         for model, instances in self.data.items():
@@ -459,12 +373,8 @@ class Collector:
             for model in models:
                 if model in sorted_models:
                     continue
-                dependencies = self.dependencies.get(
-                    model._meta.concrete_model
-                )
-                if not (
-                    dependencies and dependencies.difference(concrete_models)
-                ):
+                dependencies = self.dependencies.get(model._meta.concrete_model)
+                if not (dependencies and dependencies.difference(concrete_models)):
                     sorted_models.append(model)
                     concrete_models.add(model._meta.concrete_model)
                     found = True
@@ -478,8 +388,8 @@ class Collector:
             self.data[model] = sorted(instances, key=attrgetter("pk"))
 
         # if possible, bring the models in an order suitable for databases that
-        # don't support transactions or cannot defer constraint checks until
-        # the end of a transaction.
+        # don't support transactions or cannot defer constraint checks until the
+        # end of a transaction.
         self.sort()
         # number of objects deleted for each model label
         deleted_counter = Counter()
@@ -535,9 +445,7 @@ class Collector:
                     model = objs[0].__class__
                     query = sql.UpdateQuery(model)
                     await query.update_batch(
-                        list({obj.pk for obj in objs}),
-                        {field.name: value},
-                        self.using,
+                        list({obj.pk for obj in objs}), {field.name: value}, self.using
                     )
 
             # reverse instance collections
@@ -577,9 +485,6 @@ _SYNC_TO_ASYNC_ON_DELETE = {
     django_deletion.SET_NULL: _SET_NULL,
     django_deletion.SET_DEFAULT: _SET_DEFAULT,
     django_deletion.DO_NOTHING: _DO_NOTHING,
-    django_deletion.DB_CASCADE: _DB_CASCADE,
-    django_deletion.DB_SET_DEFAULT: _DB_SET_DEFAULT,
-    django_deletion.DB_SET_NULL: _DB_SET_NULL,
 }
 
 
@@ -617,10 +522,14 @@ async def _abulk_related_objects(field, objs, using):
     content_type = await aget_for_model(
         field.model, using, field.for_concrete_model
     )
-    return field.remote_field.model._async_base_manager.using(using).filter(
+    return field.remote_field.model._async_base_manager.using(
+        using
+    ).filter(
         **{
             f"{field.content_type_field_name}__pk": content_type.pk,
-            f"{field.object_id_field_name}__in": [obj.pk for obj in objs],
+            f"{field.object_id_field_name}__in": [
+                obj.pk for obj in objs
+            ],
         }
     )
 

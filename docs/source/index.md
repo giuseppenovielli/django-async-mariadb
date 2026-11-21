@@ -67,7 +67,7 @@ is pinned to the Django feature release it was generated against.
 
 | django-async-backend | Django  |
 | -------------------- | ------- |
-| `6.1.3`              | `6.1.0` |
+| `5.2.x`              | `5.2.x` |
 
 Part of the ORM layer is generated from Django's own source *ahead of time*:
 the generated modules are committed to git and shipped in the wheel, so nothing

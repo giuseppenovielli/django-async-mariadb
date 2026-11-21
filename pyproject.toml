@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-async-backend"
-version = "6.1.5"
+version = "5.2.0"
 description = "True async Django ORM and PostgreSQL backend with connection pooling and async transactions"
 readme = "README.md"
 authors = ["Arfey <arfey@gmail.com>"]
@@ -15,6 +15,8 @@ classifiers = [
     "Framework :: Django",
 
     "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
@@ -37,8 +39,8 @@ documentation = "https://django-async-backend.readthedocs.io/"
 repository = "https://github.com/Arfey/django-async-backend"
 
 [tool.poetry.dependencies]
-python = ">=3.12"
-django = ">=6.1"
+python = ">=3.10"
+django = ">=5.2,<5.3"
 psycopg = "^3.2.13"
 psycopg-binary = {version = "^3.2.13", optional = true}
 psycopg-pool = {version = "^3", optional = true}

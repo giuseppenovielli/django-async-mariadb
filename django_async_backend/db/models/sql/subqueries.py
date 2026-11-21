@@ -1,8 +1,7 @@
-# This file was generated automatically. Do not modify it manually. (based on django 6.1)
+# This file was generated automatically. Do not modify it manually. (based on django 5.2)
 from django_async_backend.db.models.sql.query import Query
 """
-Query subclasses which provide extra functionality beyond simple data
-retrieval.
+Query subclasses which provide extra functionality beyond simple data retrieval.
 """
 
 from django.core.exceptions import FieldError
@@ -71,15 +70,18 @@ class UpdateQuery(Query):
         values_seq = []
         for name, val in values.items():
             field = self.get_meta().get_field(name)
+            direct = (
+                not (field.auto_created and not field.concrete) or not field.concrete
+            )
             model = field.model._meta.concrete_model
             if field.name == "pk" and model._meta.is_composite_pk:
                 raise FieldError(
                     "Composite primary key fields must be updated individually."
                 )
-            if not field.concrete:
+            if not direct or (field.is_relation and field.many_to_many):
                 raise FieldError(
-                    "Cannot update model field %r (only concrete fields are permitted)."
-                    % field
+                    "Cannot update model field %r (only non-relations and "
+                    "foreign keys permitted)." % field
                 )
             if model is not self.get_meta().concrete_model:
                 self.add_related_update(model, field, val)
@@ -93,11 +95,8 @@ class UpdateQuery(Query):
             if field.generated:
                 continue
             if hasattr(val, "resolve_expression"):
-                # Resolve expressions here so that annotations are no longer
-                # needed
-                val = val.resolve_expression(
-                    self, allow_joins=False, for_save=True
-                )
+                # Resolve expressions here so that annotations are no longer needed
+                val = val.resolve_expression(self, allow_joins=False, for_save=True)
             self.values.append((field, model, val))
 
     def add_related_update(self, model, field, value):
@@ -120,12 +119,7 @@ class InsertQuery(Query):
     compiler = "SQLInsertCompiler"
 
     def __init__(
-        self,
-        *args,
-        on_conflict=None,
-        update_fields=None,
-        unique_fields=None,
-        **kwargs,
+        self, *args, on_conflict=None, update_fields=None, unique_fields=None, **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.fields = []

@@ -4,11 +4,11 @@ module:
   new_imports:
     - "from django.db.models.base import ModelBase"
     - "from django.utils.functional import classproperty"
-    - "from django_async_backend.db import async_connections"
-    - "from django_async_backend.db.models.deletion import Collector"
-    - "from django_async_backend.db.models.manager import AsyncManager"
-    - "from django_async_backend.db.transaction import async_atomic"
-    - "from django_async_backend.db.transaction import async_mark_for_rollback_on_error"
+    - "from django_async_mariadb.db import async_connections"
+    - "from django_async_mariadb.db.models.deletion import Collector"
+    - "from django_async_mariadb.db.models.manager import AsyncManager"
+    - "from django_async_mariadb.db.transaction import async_atomic"
+    - "from django_async_mariadb.db.transaction import async_mark_for_rollback_on_error"
 
   import_aliases:
     - name: connections
@@ -18,8 +18,6 @@ module:
     - name: FETCH_ONE
       remove: true
     - name: DO_NOTHING
-      remove: true
-    - name: DatabaseOnDelete
       remove: true
 
   assigns:
@@ -204,6 +202,12 @@ module:
         _validate_force_insert:
           rename: _async_validate_force_insert
 
+        _parse_save_params:
+          rename: _async_parse_save_params
+
+        _check_default_pk:
+          remove: true
+
         asave:
           remove: true
 
@@ -216,6 +220,10 @@ module:
                 rename:
                   attr: _async_prepare_related_fields_for_save
               to_await: true
+            - func:
+                attr: _parse_save_params
+                rename:
+                  attr: _async_parse_save_params
             - func:
                 attr: _is_pk_set
                 rename:
