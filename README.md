@@ -1,11 +1,5 @@
 # Async Django ORM for MariaDB
 
-[![CI status](https://img.shields.io/github/actions/workflow/status/giuseppenovielli/django_async_mariadb/test.yml?logo=github&style=for-the-badge&labelColor=%23282828)](https://github.com/giuseppenovielli/django_async_mariadb/actions)
-[![Latest Version in PyPI](https://img.shields.io/pypi/v/django-async-mariadb.svg?style=for-the-badge)](https://pypi.org/project/django-async-mariadb/)
-[![Supported Python versions](https://img.shields.io/pypi/pyversions/django-async-mariadb.svg?style=for-the-badge)](https://pypi.org/project/django-async-mariadb/)
-
-[![Monthly downloads](https://static.pepy.tech/personalized-badge/django-async-mariadb?period=month&units=international_system&left_color=grey&right_color=blue&left_text=downloads/month)](https://pepy.tech/projects/django-async-mariadb)
-
 Async Django ORM and MariaDB database backend.
 
 Django's `a`-prefixed ORM methods (`aget`, `acreate`, …) are thin
@@ -14,10 +8,6 @@ synchronous connection. **django-async-mariadb** replaces the database layer
 itself, so queries are issued on a real asyncio connection through
 [asyncmy](https://github.com/long2ice/asyncmy), with async transactions, async
 cursors and optional connection pooling — no thread emulation.
-
-The project is **production ready**: the API is stable, and each release is
-pinned to the Django feature release it was generated against, so upgrades stay
-predictable.
 
 📖 **[Read the documentation](docs/source/index.md)**
 
@@ -48,15 +38,16 @@ releases and are safe to upgrade to.
 ## Installation
 
 ```bash
-pip install "django-async-mariadb[mysqlclient]"
+pip install "django-async-mariadb[mysqlclient] @ git+https://github.com/giuseppenovielli/django_async_mariadb.git"
 ```
 
-The package uses `asyncmy` for asynchronous connections and `mysqlclient` for
-the synchronous Django compatibility path. If a native client library cannot
-be installed, use the optional pure-Python fallback instead:
+The package is currently installed from GitHub. It uses `asyncmy` for
+asynchronous connections and `mysqlclient` for the synchronous Django
+compatibility path. If a native client library cannot be installed, use the
+optional pure-Python fallback instead:
 
 ```bash
-pip install "django-async-mariadb[pymysql]"
+pip install "django-async-mariadb[pymysql] @ git+https://github.com/giuseppenovielli/django_async_mariadb.git"
 ```
 
 Connection pooling is enabled through the database `OPTIONS` setting.
