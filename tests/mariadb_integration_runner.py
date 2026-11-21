@@ -97,14 +97,13 @@ def _dotenv_values():
             "DJANGO_ASYNC_MARIADB_ENV_FILE", LIBRARY_ROOT / ".env"
         )
     )
-    if not env_path.exists():
-        return values
-    for line in env_path.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        values[key] = value.strip().strip('"').strip("'")
+    if env_path.exists():
+        for line in env_path.read_text().splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            values[key] = value.strip().strip('"').strip("'")
     for key in ("DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT"):
         if key in os.environ:
             values[key] = os.environ[key]
