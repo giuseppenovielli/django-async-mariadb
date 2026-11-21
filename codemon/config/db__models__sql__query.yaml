@@ -1,0 +1,46 @@
+pathname: db/models/sql/query.py
+
+
+module:
+  new_imports:
+    - "from django_async_backend.db import async_connections as connections"
+
+  import_aliases:
+    - name: connections
+      remove: true
+    - name: AggregateQuery
+      remove: true
+
+  classes:
+    Query:
+      methods:
+        get_aggregation:
+          to_async: true
+          add_raw_top:
+            - |
+              from django_async_backend.db.models.sql.subqueries import (
+                  AggregateQuery,
+              )
+          calls:
+            - func:
+                attr: execute_sql
+              to_await: true
+
+        has_results:
+          to_async: true
+          calls:
+            - func:
+                attr: has_results
+              to_await: true
+
+        get_count:
+          to_async: true
+          return_blocks:
+            - replace_raw: '(await obj.get_aggregation(using, {"__count": Count("*")}))["__count"]'
+
+        explain:
+          to_async: true
+          attrs:
+            - value: compiler
+              attr: explain_query
+              to_async_comp: i

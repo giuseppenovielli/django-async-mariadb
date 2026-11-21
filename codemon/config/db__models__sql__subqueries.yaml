@@ -1,0 +1,34 @@
+pathname: db/models/sql/subqueries.py
+
+module:
+  new_imports:
+    - "from django_async_backend.db.models.sql.query import Query"
+
+  import_aliases:
+    - name: Query
+      remove: true
+
+  classes:
+    DeleteQuery:
+      methods:
+        do_query:
+          to_async: true
+          calls:
+            - func:
+                attr: execute_sql
+              to_await: true
+        delete_batch:
+          to_async: true
+          calls:
+            - func:
+                attr: do_query
+              to_await: true
+
+    UpdateQuery:
+      methods:
+        update_batch:
+          to_async: true
+          calls:
+            - func:
+                attr: execute_sql
+              to_await: true

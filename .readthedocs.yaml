@@ -1,0 +1,20 @@
+version: 2
+
+build:
+  os: ubuntu-lts-latest
+  tools:
+    python: "3.13"
+  jobs:
+    post_checkout:
+      - git fetch --unshallow || true
+    install:
+      - pip install poetry poetry-plugin-export
+      - poetry export --only docs --format requirements.txt --output docs-requirements.txt --without-hashes
+      - pip install -r docs-requirements.txt
+      - pip install .
+    build:
+      html:
+        - python -m sphinx docs/source $READTHEDOCS_OUTPUT/html -b html
+
+sphinx:
+  configuration: docs/source/conf.py

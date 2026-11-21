@@ -1,0 +1,108 @@
+shell: bash
+
+mixins:
+  - codemon/lets.generator.yaml
+
+
+init: |
+  [ -e ".lets/init" ] && exit 0
+  echo ✅ install pre-commit
+  pip install pre-commit --break-system-packages
+  echo ✅ init pre-commit
+  pre-commit install
+  echo ✅ setup .git-blame-ignore-revs
+  git config blame.ignoreRevsFile .git-blame-ignore-revs
+  echo ✅ Done!
+  touch .lets/init
+
+commands:
+  _test_database:
+    cmd: |
+      if docker compose ps postgres | grep -q 'Up'; then
+        echo "✅ postgres is already running"
+      else
+        echo "🚀 starting postgres"
+        docker compose up postgres -d
+      fi
+
+  test_app:
+    description: Run test application
+    cmd: cd test_example && PYTHONPATH=. DJANGO_SETTINGS_MODULE='test_example.settings' poetry run uvicorn test_example.asgi:application --reload --host 0.0.0.0 --port 8000
+
+  generate:
+    description: Generate ORM
+    env:
+      SKIP: flake8
+    cmd: |
+      generated=$(sed -n 's|^pathname: *|django_async_backend/|p' codemon/config/*.yaml)
+
+      [ -n "$generated" ] || {
+        echo "❌ no 'pathname:' entries found in codemon/config/*.yaml" >&2
+        exit 1
+      }
+
+      git restore $generated
+      poetry run python -m codemon
+
+      for i in 1 2 3 4 5; do
+        poetry run pre-commit run --all-files && exit 0
+        echo "🔁 hooks modified files, re-running (attempt $i)"
+      done
+
+      echo "❌ formatting did not converge after 5 attempts" >&2
+      exit 1
+
+  lint:
+    group: Linters & Formatters
+    description: Run all linters
+    cmd: poetry run pre-commit run --all-files
+
+  psql:
+    description: psql shell
+    cmd: docker compose exec -it postgres psql -U postgres
+
+  docs:
+    group: Docs
+    description: Build the documentation into docs/build/html
+    cmd: poetry run python -m sphinx docs/source docs/build/html -b html
+
+  docs_serve:
+    group: Docs
+    description: Serve the docs with live reload on http://localhost:8080
+    cmd: poetry run sphinx-autobuild docs/source docs/build/html --port 8080
+
+  test:
+    group: Tests
+    depends:
+      - _test_database
+    options: |
+      Usage: lets test [<test>] [-v <number>]
+
+        Options:
+            <test>                  path to the test or module
+            -v                      verbose level
+
+        Example:
+          lets test tests.db.models
+    cmd:
+      - cd
+      - tests
+      - "&&"
+      - poetry
+      - run
+      - python
+      - manage.py
+      - test
+
+  test_django:
+    group: Tests
+    description: Run Django's own test suite against the async backend (docker)
+    cmd: |
+      cd tests_django && docker compose run --build --rm test_django_integration
+
+  coverage:
+    cmd: |
+      cd tests && poetry run coverage run --rcfile=../pyproject.toml manage.py test
+      poetry run coverage report --rcfile=../pyproject.toml
+      poetry run coverage html --rcfile=../pyproject.toml
+      open htmlcov/index.html

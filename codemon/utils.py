@@ -1,0 +1,203 @@
+from __future__ import annotations
+
+import os
+import pathlib
+
+import libcst as cst
+import requests
+import yaml
+from pydantic import BaseModel
+
+parent = pathlib.Path(__file__).parent
+
+
+class RenameAttr(BaseModel):
+    attr: str | None = None
+    value: str | None = None
+    name: str | None = None
+
+
+class MethodCall(BaseModel):
+    name: str
+    # Raw source for each argument, e.g. ``obj``, ``flat=True``, ``*rest``.
+    args: list[str] | None = None
+
+
+class Attr(BaseModel):
+    name: str | None = None
+    value: str | None = None
+    parent_attr: str | None = None
+    attr: str | None = None
+
+    # actions
+    rename: RenameAttr | None = None
+    # ``<node>`` -> ``<node>.<name>(<args>)``
+    to_call_method: MethodCall | None = None
+    wrap: str | None = None
+    to_await: bool = False
+    # Iterate the call headed by this reference asynchronously. The value is
+    # the comprehension variable, so ``obj`` on ``qs.filter`` turns
+    # ``qs.filter(...)`` into ``[obj async for obj in qs.filter(...)]``.
+    to_async_comp: str | None = None
+
+
+class BooleanOperation(BaseModel):
+    operands: list[Attr] | None = None
+
+
+class ContextManagers(BaseModel):
+    asname: str | None = None
+    to_async: bool = False
+
+
+class ForStatement(BaseModel):
+    target: str
+    to_async: bool = False
+
+
+class CompForTarget(BaseModel):
+    name: str
+
+
+class CompForBlock(BaseModel):
+    to_async: bool = False
+    target: CompForTarget
+
+
+class Call(BaseModel):
+    to_await: bool = False
+    # Matcher for the called reference, and the operations applied to it. An
+    # omitted ``func`` matches any call.
+    func: Attr | None = None
+    replace_raw: str | None = None
+    args: list[Call] | None = None
+
+
+class ReturnBlock(BaseModel):
+    # Source of the returned expression this block applies to. A function can
+    # return in several places; an omitted ``match_raw`` matches them all.
+    match_raw: str | None = None
+    replace_raw: str | None = None
+    remove: bool = False
+
+
+class Assign(BaseModel):
+    remove: bool = False
+    # Matcher for the assignment target, and the operations applied to it.
+    target: Attr
+    attrs: list[Attr] | None = None
+
+
+class Method(BaseModel):
+    remove: bool = False
+    add_raw_top: list[str] = None
+    add_raw_bottom: list[str] = None
+    to_async: bool = False
+    rename: str | None = None
+    calls: list[Call] | None = None
+    attrs: list[Attr] | None = None
+    boolean_operations: list[BooleanOperation] | None = None
+    for_statements: list[ForStatement] | None = None
+    context_managers: list[ContextManagers] | None = None
+    return_blocks: list[ReturnBlock] | None = None
+    comp_for_blocks: list[CompForBlock] | None = None
+
+
+class Class(BaseModel):
+    remove: bool = False
+    rename: str | None = None
+    clear_bases: bool = False
+    add_raw_top: list[str] | None = None
+    methods: dict[str, Method] = {}
+    assigns: list[Assign] | None = None
+
+
+class Function(BaseModel):
+    rename: str | None = None
+    add_raw_top: list[str] = None
+    to_async: bool = False
+    functions: dict[str, Function] | None = None
+    calls: list[Call] | None = None
+    attrs: list[Attr] | None = None
+    boolean_operations: list[BooleanOperation] | None = None
+    for_statements: list[ForStatement] | None = None
+    return_blocks: list[ReturnBlock] | None = None
+    remove: bool = False
+    comp_for_blocks: list[CompForBlock] | None = None
+
+
+class ImportAlias(BaseModel):
+    name: str | None = None
+    remove: bool = False
+
+
+class Module(BaseModel):
+    classes: dict[str, Class] | None = None
+    new_imports: list[str] | None = None
+    import_aliases: list[ImportAlias] | None = None
+    add_raw_bottom: list[str] = None
+    functions: dict[str, Function] | None = None
+    assigns: list[Assign] | None = None
+
+
+class Config(BaseModel):
+    pathname: str
+    module: Module
+
+
+def is_commit_hash(version: str) -> bool:
+    return len(version) >= 7 and all(c in "0123456789abcdef" for c in version)
+
+
+def load_file(*, config: Config, version: str):
+    ref = version if is_commit_hash(version) else f"refs/tags/{version}"
+
+    response = requests.get(
+        f"https://raw.githubusercontent.com/django/django/{ref}/django/{config.pathname}",  # noqa
+        timeout=10,
+    )
+    response.raise_for_status()
+
+    target = parent.parent / "django_async_backend" / config.pathname
+
+    os.makedirs(os.path.dirname(target), exist_ok=True)
+
+    with open(target, mode="w") as file:
+        file.write(response.text)
+
+
+def get_ast(config: Config):
+    with open(
+        parent.parent / "django_async_backend" / config.pathname, "r"
+    ) as file:
+        source = file.read()
+
+    module = cst.parse_module(source)
+    wrapper = cst.metadata.MetadataWrapper(module)
+
+    return wrapper
+
+
+def write_ast(ast, config, version):
+    with open(
+        parent.parent / "django_async_backend" / config.pathname, "w"
+    ) as f:
+        f.write(
+            f"# This file was generated automatically. Do not modify it manually. (based on django {version})\n"  # noqa
+        )
+        f.write(ast.code)
+
+
+def get_configs():
+    return [
+        os.path.abspath(f)
+        for f in (parent / "config").glob("*")
+        if os.path.isfile(f)
+    ]
+
+
+def load_config(path) -> Config:
+    with open(path, mode="r") as f:
+        data = yaml.safe_load(f)
+
+    return Config.model_validate(data)

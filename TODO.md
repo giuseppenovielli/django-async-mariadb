@@ -1,0 +1,12 @@
+- async signals
+- code coverage
+- async query manager
+- connection_created.asend
+- close_old_connections + signals.request_started | signals.request_finished
+- test AsyncConnectionHandler + thread_critical (.set context var)
+- mark all helper functions / classes as private
+- add a test for the ORM (it should fail if an unsupported method is used)
+
+
+- squash commit
+- django test full run
