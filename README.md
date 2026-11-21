@@ -18,11 +18,15 @@ cursors and optional connection pooling — no thread emulation.
 The package tracks Django's major and minor version, so the release you install
 is pinned to the Django feature release it was generated against.
 
-| Component | Supported versions |
-| --------- | ------------------ |
-| Python | `3.10+` |
-| Django | `>=5.2,<6.0` (`5.2.x`) |
-| MariaDB | `10.11` |
+| Component | `django-async-backend` (original source) | `django-async-mariadb` (this fork) |
+| --------- | --------------------------------------- | ---------------------------------- |
+| Package version | `6.1.5` | `5.2.0` |
+| Python | `>=3.12` | `3.10+` |
+| Django | `>=6.1` (`6.1.x`) | `>=5.2,<5.3` (`5.2.x`) |
+| Database backend | PostgreSQL | MariaDB `10.11` |
+| Async driver | `psycopg` 3 | `asyncmy` |
+| Async ORM | Original implementation | Original implementation adapted to Django 5.2 |
+| Source baseline | — | `django-async-backend` `6.1.5` |
 
 Part of the ORM layer is generated from Django's own source, so a Django feature
 release gets a matching django-async-mariadb feature release rather than a
