@@ -18,9 +18,11 @@ cursors and optional connection pooling — no thread emulation.
 The package tracks Django's major and minor version, so the release you install
 is pinned to the Django feature release it was generated against.
 
-| django-async-mariadb | Django  |
-| -------------------- | ------- |
-| `5.2.x`              | `5.2.x` |
+| Component | Supported versions |
+| --------- | ------------------ |
+| Python | `3.10+` |
+| Django | `>=5.2,<6.0` (`5.2.x`) |
+| MariaDB | `10.11` |
 
 Part of the ORM layer is generated from Django's own source, so a Django feature
 release gets a matching django-async-mariadb feature release rather than a
@@ -223,3 +225,27 @@ Not supported ❌
 
 Not supported ❌ — `instance.<related>.all()` is the sync ORM. See
 [Pitfalls](#pitfalls).
+
+## Disclaimer
+
+This project was generated entirely with the assistance of artificial
+intelligence. Review, test, and supervise the code carefully before using it
+in production. No guarantee is made that the implementation is suitable for a
+specific application or production workload.
+
+## Fork and scope
+
+This project is a fork of the original
+[django-async/django-async-backend](https://github.com/django-async/django-async-backend),
+adapted to support Django 5.2 LTS and MariaDB. It does not introduce new ORM
+features or modify the async ORM functionality implemented by the original
+author; the changes are limited to the compatibility and database-backend
+adaptations required for these targets.
+
+## Author
+
+Giuseppe Novielli — [novielligiuseppe@gmail.com](mailto:novielligiuseppe@gmail.com)
+
+## License
+
+This project is released under the [Apache License 2.0](LICENSE).
