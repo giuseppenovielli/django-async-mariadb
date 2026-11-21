@@ -105,6 +105,9 @@ def _dotenv_values():
             continue
         key, value = line.split("=", 1)
         values[key] = value.strip().strip('"').strip("'")
+    for key in ("DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT"):
+        if key in os.environ:
+            values[key] = os.environ[key]
     return values
 
 
