@@ -3,17 +3,11 @@
 ## Installation
 
 ```bash
-pip install django-async-backend[binary]
+pip install django-async-mariadb
 ```
 
-The `binary` extra installs the C-accelerated {pypi}`psycopg` implementation.
-Without it you get the pure-Python implementation, which is noticeably slower.
-
-If you use connection pooling, add the `pool` extra as well:
-
-```bash
-pip install django-async-backend[binary,pool]
-```
+The package uses {pypi}`asyncmy` for asynchronous connections and PyMySQL as
+the synchronous fallback. Enable pooling with the database `OPTIONS` setting.
 
 ### Versioning
 
@@ -29,7 +23,14 @@ Set the database engine to the async backend:
 ```python
 DATABASES = {
     "default": {
-        "ENGINE": "django_async_backend.db.backends.postgresql",
+        "ENGINE": "django_async_mariadb.db.backends.mariadb",
+        "NAME": "mydb",
+        "USER": "app",
+        "PASSWORD": "...",
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
+        "OPTIONS": {"pool": {"minsize": 1, "maxsize": 10}},
+        "CONN_MAX_AGE": 0,
         ...
     },
 }
@@ -37,20 +38,20 @@ DATABASES = {
 
 ```{note}
 **This is a safe change for existing projects.** The backend is fully
-compatible with Django's default `django.db.backends.postgresql`: it subclasses
+compatible with Django's default `django.db.backends.mysql`: it subclasses
 it and falls back to that implementation for everything synchronous. Your
 existing sync ORM code — `Model.objects`, migrations, the admin, management
 commands — keeps working unchanged, so you can switch the engine and adopt the
 async API gradually rather than all at once.
 ```
 
-Make sure `django_async_backend` — and any other required apps — are listed in
+Make sure `django_async_mariadb` — and any other required apps — are listed in
 `INSTALLED_APPS`:
 
 ```python
 INSTALLED_APPS = [
     ...
-    "django_async_backend",
+    "django_async_mariadb",
     ...
 ]
 ```

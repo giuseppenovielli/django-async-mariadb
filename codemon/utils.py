@@ -158,7 +158,7 @@ def load_file(*, config: Config, version: str):
     )
     response.raise_for_status()
 
-    target = parent.parent / "django_async_backend" / config.pathname
+    target = parent.parent / "django_async_mariadb" / config.pathname
 
     os.makedirs(os.path.dirname(target), exist_ok=True)
 
@@ -168,7 +168,7 @@ def load_file(*, config: Config, version: str):
 
 def get_ast(config: Config):
     with open(
-        parent.parent / "django_async_backend" / config.pathname, "r"
+        parent.parent / "django_async_mariadb" / config.pathname, "r"
     ) as file:
         source = file.read()
 
@@ -180,7 +180,7 @@ def get_ast(config: Config):
 
 def write_ast(ast, config, version):
     with open(
-        parent.parent / "django_async_backend" / config.pathname, "w"
+        parent.parent / "django_async_mariadb" / config.pathname, "w"
     ) as f:
         f.write(
             f"# This file was generated automatically. Do not modify it manually. (based on django {version})\n"  # noqa

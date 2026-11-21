@@ -4,7 +4,7 @@ from test_app.models import (
     TestModel,
 )
 
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class TestQuerySetOrdered(AsyncioTestCase):

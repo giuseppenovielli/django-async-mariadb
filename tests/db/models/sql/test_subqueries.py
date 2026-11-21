@@ -4,8 +4,8 @@ from django.db import DEFAULT_DB_ALIAS
 from django.db.models import F
 from test_app.models import TestModel
 
-from django_async_backend.db.models import sql as async_sql
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.db.models import sql as async_sql
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class TestUpdateBatch(AsyncioTestCase):
@@ -72,7 +72,7 @@ class TestUpdateBatch(AsyncioTestCase):
         pk_list = [self.item1.pk, self.item2.pk, self.item3.pk]
         query = async_sql.UpdateQuery(TestModel)
         with mock.patch(
-            "django_async_backend.db.models.sql.subqueries."
+            "django_async_mariadb.db.models.sql.subqueries."
             "GET_ITERATOR_CHUNK_SIZE",
             1,
         ):
@@ -124,7 +124,7 @@ class TestDeleteQuery(AsyncioTestCase):
         pk_list = [self.item1.pk, self.item2.pk, self.item3.pk]
         query = async_sql.DeleteQuery(TestModel)
         with mock.patch(
-            "django_async_backend.db.models.sql.subqueries."
+            "django_async_mariadb.db.models.sql.subqueries."
             "GET_ITERATOR_CHUNK_SIZE",
             1,
         ):

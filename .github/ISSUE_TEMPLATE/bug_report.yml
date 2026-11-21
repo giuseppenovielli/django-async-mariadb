@@ -46,8 +46,8 @@ body:
   - type: input
     id: version-package
     attributes:
-      label: django-async-backend version
-      placeholder: "6.0.8"
+      label: django-async-mariadb version
+      placeholder: "5.2.0"
     validations:
       required: true
 
@@ -55,7 +55,7 @@ body:
     id: version-django
     attributes:
       label: Django version
-      placeholder: "6.0"
+      placeholder: "5.2"
     validations:
       required: true
 
@@ -68,10 +68,10 @@ body:
       required: true
 
   - type: input
-    id: version-postgres
+    id: version-mariadb
     attributes:
-      label: PostgreSQL version
-      placeholder: "15"
+      label: MariaDB version
+      placeholder: "10.11"
     validations:
       required: true
 
@@ -96,5 +96,5 @@ body:
           required: false
         - label: The failing code does not touch a related manager (`instance.<related>.all()`).
           required: false
-        - label: I am on the latest version of django-async-backend.
+        - label: I am on the latest version of django-async-mariadb.
           required: false

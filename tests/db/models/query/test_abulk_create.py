@@ -16,8 +16,8 @@ from test_app.models import (
     UuidPkModel,
 )
 
-from django_async_backend.db import async_connections
-from django_async_backend.test import (
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.test import (
     AsyncioTestCase,
     AsyncioTransactionTestCase,
 )
@@ -41,7 +41,7 @@ class TestABulkCreate(AsyncioTestCase):
         self.assertEqual(values, [1, 2, 3])
 
     async def test_sets_primary_keys(self):
-        # PostgreSQL returns the inserted ids via RETURNING, so the pk of each
+        # MariaDB returns the inserted ids via RETURNING, so the pk of each
         # object should be populated after abulk_create.
         objs = await TestModel.async_objects.abulk_create(
             [

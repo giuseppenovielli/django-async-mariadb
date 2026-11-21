@@ -2,13 +2,13 @@ pathname: db/models/query.py
 
 module:
   new_imports:
-    - "from django_async_backend.db import async_connections"
-    - "from django_async_backend.db.models import sql as async_sql"
-    - "from django_async_backend.db.transaction import async_atomic"
-    - "from django_async_backend.db.transaction import async_mark_for_rollback_on_error"
+    - "from django_async_mariadb.db import async_connections"
+    - "from django_async_mariadb.db.models import sql as async_sql"
+    - "from django_async_mariadb.db.transaction import async_atomic"
+    - "from django_async_mariadb.db.transaction import async_mark_for_rollback_on_error"
 
   import_aliases:
-    # The async Collector lives in django_async_backend.db.models.deletion,
+    # The async Collector lives in django_async_mariadb.db.models.deletion,
     # which imports this module, so adelete() imports it locally instead.
     - name: Collector
       remove: true
@@ -542,7 +542,7 @@ module:
           # deletion imports this module for its QuerySet isinstance check, so
           # the async Collector can only be imported here.
           add_raw_top:
-            - "from django_async_backend.db.models.deletion import Collector"
+            - "from django_async_mariadb.db.models.deletion import Collector"
           calls:
             - func:
                 value: collector

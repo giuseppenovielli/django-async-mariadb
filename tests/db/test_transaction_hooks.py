@@ -3,9 +3,9 @@ from django.db import (
     transaction,
 )
 
-from django_async_backend.db import async_connections
-from django_async_backend.db.transaction import async_atomic
-from django_async_backend.test import AsyncioTransactionTestCase
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.db.transaction import async_atomic
+from django_async_mariadb.test import AsyncioTransactionTestCase
 
 
 class ForcedError(Exception):
@@ -17,7 +17,7 @@ async def create_table():
         await cursor.execute(
             """
             CREATE TABLE reporter_table_tmp (
-                id SERIAL PRIMARY KEY,
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL UNIQUE
             );
             """
@@ -97,7 +97,7 @@ class TestConnectionOnCommit(AsyncioTransactionTestCase):
             raise ForcedError("robust callback")
 
         with self.assertLogs(
-            "django_async_backend.db.backends", "ERROR"
+            "django_async_mariadb.db.backends", "ERROR"
         ) as cm:
             await connection.on_commit(robust_callback, robust=True)
             await self.do(1)
@@ -122,7 +122,7 @@ class TestConnectionOnCommit(AsyncioTransactionTestCase):
             raise ForcedError("robust callback")
 
         with self.assertLogs(
-            "django_async_backend.db.backends", "ERROR"
+            "django_async_mariadb.db.backends", "ERROR"
         ) as cm:
             async with async_atomic():
                 await connection.on_commit(robust_callback, robust=True)
@@ -430,7 +430,7 @@ class TestConnectionOnCommit(AsyncioTransactionTestCase):
             raise ForcedError("robust async callback")
 
         with self.assertLogs(
-            "django_async_backend.db.backends", "ERROR"
+            "django_async_mariadb.db.backends", "ERROR"
         ) as cm:
             async with async_atomic():
                 await connection.on_commit(async_callback, robust=True)

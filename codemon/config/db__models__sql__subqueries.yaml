@@ -2,7 +2,7 @@ pathname: db/models/sql/subqueries.py
 
 module:
   new_imports:
-    - "from django_async_backend.db.models.sql.query import Query"
+    - "from django_async_mariadb.db.models.sql.query import Query"
 
   import_aliases:
     - name: Query

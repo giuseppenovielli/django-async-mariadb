@@ -4,7 +4,7 @@ from django.test import override_settings
 from django.utils import timezone
 from test_app.models import DatesModel
 
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class TestDatetimes(AsyncioTestCase):

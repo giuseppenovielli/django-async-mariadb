@@ -7,9 +7,9 @@ from django.db import DEFAULT_DB_ALIAS
 from django.db.transaction import TransactionManagementError
 from django.test import override_settings
 
-from django_async_backend.db import async_connections
-from django_async_backend.db.transaction import async_atomic
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.db.transaction import async_atomic
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class AsyncCursorTest(AsyncioTestCase):
@@ -105,7 +105,7 @@ class AsyncCursorTest(AsyncioTestCase):
 
 class AsyncCursorDebugWrapperTest(AsyncioTestCase):
     @override_settings(DEBUG=True)
-    @patch("django_async_backend.db.backends.utils.logger.debug")
+    @patch("django_async_mariadb.db.backends.utils.logger.debug")
     async def test_execute(self, debug_mock):
         connection = async_connections[DEFAULT_DB_ALIAS]
         async with await connection.cursor() as cursor:
@@ -117,7 +117,7 @@ class AsyncCursorDebugWrapperTest(AsyncioTestCase):
         debug_mock.assert_called()
 
     @override_settings(DEBUG=True)
-    @patch("django_async_backend.db.backends.utils.logger.debug")
+    @patch("django_async_mariadb.db.backends.utils.logger.debug")
     async def test_executemany(self, debug_mock):
         connection = async_connections[DEFAULT_DB_ALIAS]
         async with await connection.cursor() as cursor:

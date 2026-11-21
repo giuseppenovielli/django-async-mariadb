@@ -7,7 +7,7 @@ from django.db import (
     models,
 )
 
-import django_async_backend.db.models.base
+import django_async_mariadb.db.models.base
 
 
 class Migration(migrations.Migration):
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 "db_table": "update_or_create_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),

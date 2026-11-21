@@ -5,8 +5,8 @@ from test_app.models import (
     TestModel,
 )
 
-from django_async_backend.test import AsyncioTestCase
-from django_async_backend.utils.contenttypes import aget_for_model
+from django_async_mariadb.test import AsyncioTestCase
+from django_async_mariadb.utils.contenttypes import aget_for_model
 
 
 class TestACreate(AsyncioTestCase):

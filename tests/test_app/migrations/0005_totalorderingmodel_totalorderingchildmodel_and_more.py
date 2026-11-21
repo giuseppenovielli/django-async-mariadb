@@ -6,7 +6,7 @@ from django.db import (
     models,
 )
 
-import django_async_backend.db.models.base
+import django_async_mariadb.db.models.base
 
 
 class Migration(migrations.Migration):
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
                 "unique_together": {("headline", "slug")},
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -83,7 +83,7 @@ class Migration(migrations.Migration):
                 "db_table": "total_ordering_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -112,7 +112,7 @@ class Migration(migrations.Migration):
                 "db_table": "total_ordering_ref_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),

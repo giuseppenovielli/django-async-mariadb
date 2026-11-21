@@ -1,9 +1,12 @@
 [tool.poetry]
-name = "django-async-backend"
+name = "django-async-mariadb"
 version = "5.2.0"
-description = "True async Django ORM and PostgreSQL backend with connection pooling and async transactions"
+description = "True async Django ORM and MariaDB backend with connection pooling and async transactions"
 readme = "README.md"
-authors = ["Arfey <arfey@gmail.com>"]
+authors = [
+    "Arfey <arfey@gmail.com>",
+    "GiuseppeNovieli <novielligiuseppe@gmail.com>",
+]
 classifiers = [
     "Environment :: Web Environment",
     "Development Status :: 5 - Production/Stable",
@@ -33,27 +36,20 @@ keywords = [
   "database",
   "ORM",
 ]
-license = "MIT"
-homepage = "https://github.com/Arfey/django-async-backend"
-documentation = "https://django-async-backend.readthedocs.io/"
-repository = "https://github.com/Arfey/django-async-backend"
+license = "Apache-2.0"
+homepage = "https://github.com/giuseppenovielli/django_async_mariadb"
+repository = "https://github.com/giuseppenovielli/django_async_mariadb"
 
 [tool.poetry.dependencies]
 python = ">=3.10"
 django = ">=5.2,<5.3"
-psycopg = "^3.2.13"
-psycopg-binary = {version = "^3.2.13", optional = true}
-psycopg-pool = {version = "^3", optional = true}
-
-[tool.poetry.extras]
-binary = ["psycopg-binary"]
-pool = ["psycopg-pool"]
+asyncmy = ">=0.2,<0.3"
+pymysql = ">=1.1,<2"
 
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.13.4"
 libcst = "^1.8.6"
-psycopg = {extras = ["binary", "pool"], version = "^3"}
 pydantic = "^2.12.5"
 pyyaml = "^6.0.3"
 requests = "^2.32.5"
@@ -102,12 +98,12 @@ max-complexity = 12
 exclude = [
     ".git",
     "env/",
-    "django_async_backend/db/models/query.py",
-    "django_async_backend/db/models/base.py",
-    "django_async_backend/db/models/deletion.py",
-    "django_async_backend/db/models/sql/compiler.py",
-    "django_async_backend/db/models/sql/query.py",
-    "django_async_backend/db/models/sql/subqueries.py",
+    "django_async_mariadb/db/models/query.py",
+    "django_async_mariadb/db/models/base.py",
+    "django_async_mariadb/db/models/deletion.py",
+    "django_async_mariadb/db/models/sql/compiler.py",
+    "django_async_mariadb/db/models/sql/query.py",
+    "django_async_mariadb/db/models/sql/subqueries.py",
 ]
 extend-ignore = ["S001"]
 
@@ -118,12 +114,12 @@ exclude_dirs = [
   "tests",
   ".mypy_cache",
   ".django",
-  "django_async_backend/db/models/query.py",
-  "django_async_backend/db/models/base.py",
-  "django_async_backend/db/models/deletion.py",
-  "django_async_backend/db/models/sql/compiler.py",
-  "django_async_backend/db/models/sql/query.py",
-  "django_async_backend/db/models/sql/subqueries.py",
+  "django_async_mariadb/db/models/query.py",
+  "django_async_mariadb/db/models/base.py",
+  "django_async_mariadb/db/models/deletion.py",
+  "django_async_mariadb/db/models/sql/compiler.py",
+  "django_async_mariadb/db/models/sql/query.py",
+  "django_async_mariadb/db/models/sql/subqueries.py",
 ]
 
 [tool.mypy]

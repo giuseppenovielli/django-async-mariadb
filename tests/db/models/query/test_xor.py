@@ -1,7 +1,7 @@
 from test_app.models import TestModel
 
-from django_async_backend.db.models.query import QuerySet as AsyncQuerySet
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.db.models.query import QuerySet as AsyncQuerySet
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class TestXor(AsyncioTestCase):
@@ -183,17 +183,6 @@ class TestXor(AsyncioTestCase):
 
         with self.assertRaises(TypeError):
             queryset1 ^ queryset2
-
-    async def test_xor_is_not_supported_natively_on_postgres(self):
-        # PostgreSQL has supports_logical_xor = False, so WhereNode rewrites
-        # a XOR b into (a OR b) AND MOD(a + b, 2) = 1.
-        queryset1 = TestModel.async_objects.filter(value__lte=2)
-        queryset2 = TestModel.async_objects.filter(value__gte=2)
-
-        sql = str((queryset1 ^ queryset2).query)
-
-        self.assertNotIn("XOR", sql)
-        self.assertIn("CASE WHEN", sql)
 
     async def test_xor_three_way(self):
         # With more than two operands the rewrite adds MOD(..., 2): the result

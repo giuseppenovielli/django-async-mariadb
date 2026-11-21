@@ -1,6 +1,6 @@
-from django_async_backend.db import async_connections
-from django_async_backend.db.transaction import async_atomic
-from django_async_backend.test import (
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.db.transaction import async_atomic
+from django_async_mariadb.test import (
     AsyncioTestCase,
     AsyncioTransactionTestCase,
 )
@@ -16,7 +16,10 @@ async def purge():
 class DownCallsHelperMixin:
     async def asyncSetUp(self):
         async with await async_connections["default"].cursor() as c:
-            await c.execute("CREATE TABLE IF NOT EXISTS demo (id SERIAL)")
+            await c.execute(
+                "CREATE TABLE IF NOT EXISTS demo "
+                "(id BIGINT AUTO_INCREMENT PRIMARY KEY)"
+            )
 
     async def asyncTearDown(self):
         # RuntimeError: "Using a transaction in a nested task is forbidden"

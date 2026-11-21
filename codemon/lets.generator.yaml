@@ -46,7 +46,7 @@ commands:
       echo "📌 $(git -C "$REPO_DIR" log -1 --format='%h %cd %s' --date=short "$FULL")"
       echo
 
-      GENERATED=$(sed -n 's|^pathname: *|django_async_backend/|p' \
+      GENERATED=$(sed -n 's|^pathname: *|django_async_mariadb/|p' \
         "$CODEMON"/config/*.yaml | tr '\n' ' ')
 
       # On failure the upgrade is deliberately left in place -- generated

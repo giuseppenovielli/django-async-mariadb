@@ -9,15 +9,15 @@ from django.db import (
     transaction,
 )
 
-from django_async_backend.db import (
+from django_async_mariadb.db import (
     async_connections,
     async_new_connection,
 )
-from django_async_backend.db.transaction import (
+from django_async_mariadb.db.transaction import (
     async_atomic,
     async_mark_for_rollback_on_error,
 )
-from django_async_backend.test import AsyncioTransactionTestCase
+from django_async_mariadb.test import AsyncioTransactionTestCase
 
 
 async def create_table():
@@ -25,7 +25,7 @@ async def create_table():
         await cursor.execute(
             """
             CREATE TABLE reporter_table_tmp (
-                id SERIAL PRIMARY KEY,
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL UNIQUE
             );
             """
@@ -509,7 +509,7 @@ class AsyncAtomicErrorsTests(AsyncioTransactionTestCase):
             await connection.close()
             # The connection is closed and the transaction is marked as
             # needing rollback. This will raise an InterfaceError on databases
-            # that refuse to create cursors on closed connections (PostgreSQL)
+            # that refuse to create cursors on closed connections (MariaDB)
             # and a TransactionManagementError on other databases.
             with self.assertRaises(Error):
                 await create_instance(2)
@@ -599,7 +599,7 @@ class NewConnectionTransaction(AsyncioTransactionTestCase):
 class ConcurrentAsyncAtomicTests(AsyncioTransactionTestCase):
     """
     Child tasks that inherit a parent's connection via ContextVar can corrupt
-    transaction state or silently lose writes when sharing the same psycopg
+    transaction state or silently lose writes when sharing the same asyncmy
     async connection. validate_task_sharing, called on every
     cursor/commit/rollback, rejects such sharing with a RuntimeError.
     """

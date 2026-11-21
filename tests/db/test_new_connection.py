@@ -3,12 +3,12 @@ import asyncio
 from django.db import DEFAULT_DB_ALIAS
 from test_app.models import TestModel
 
-from django_async_backend.db import (
+from django_async_mariadb.db import (
     async_connections,
     async_new_connection,
 )
-from django_async_backend.db.transaction import async_atomic
-from django_async_backend.test import AsyncioTransactionTestCase
+from django_async_mariadb.db.transaction import async_atomic
+from django_async_mariadb.test import AsyncioTransactionTestCase
 
 
 async def names():

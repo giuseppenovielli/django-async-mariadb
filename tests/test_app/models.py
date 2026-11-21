@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Value
 
-from django_async_backend.db.models.base import AsyncModelMixin
+from django_async_mariadb.db.models.base import AsyncModelMixin
 
 
 class AbstractBaseModel(AsyncModelMixin, models.Model):

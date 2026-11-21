@@ -44,7 +44,7 @@ its own connection, with `async_new_connection`:
 ```python
 import asyncio
 
-from django_async_backend.db import async_new_connection
+from django_async_mariadb.db import async_new_connection
 
 results = await asyncio.gather(
     async_new_connection(Book.async_objects.acount()),
@@ -64,7 +64,7 @@ connection, and `gather()` would reject them with `RuntimeError`.
 **Use this sparingly.** Every wrapped call opens a *real* database connection
 for as long as it runs. Fanning out inside a request multiplies your connection
 count by the width of the fan-out — ten parallel queries per request across
-fifty concurrent requests is five hundred connections, and Postgres will refuse
+fifty concurrent requests is five hundred connections, and MariaDB will refuse
 new ones long before that. Reach for it when a specific query genuinely needs
 to run alongside another, not as a default wrapper.
 ```

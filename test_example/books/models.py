@@ -1,6 +1,6 @@
 from django.db import models
 
-from django_async_backend.db.models.manager import AsyncManager
+from django_async_mariadb.db.models.manager import AsyncManager
 
 
 class Book(models.Model):

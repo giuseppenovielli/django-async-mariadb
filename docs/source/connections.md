@@ -5,7 +5,7 @@
 The connection handler manages database connections for your async backend.
 
 ```python
-from django_async_backend.db import async_connections
+from django_async_mariadb.db import async_connections
 
 connection = async_connections["default"]
 
@@ -26,7 +26,7 @@ concurrent queries.
 ## Cursors
 
 `await connection.cursor()` returns an `AsyncCursorWrapper` around the
-underlying {pypi}`psycopg` cursor. The most commonly used methods are:
+underlying {pypi}`asyncmy` cursor. The most commonly used methods are:
 
 - `execute` / `executemany` — awaitable;
 - `fetchone` / `fetchmany` / `fetchall` — awaitable;
@@ -40,10 +40,10 @@ async with await connection.cursor() as cursor:
 
 The wrapper is a thin proxy: it implements `execute` and `executemany` itself
 (to run Django's `execute_wrappers` and translate database errors), and passes
-everything else straight through to the psycopg cursor. So the rest of
-psycopg's [cursor
-API](https://www.psycopg.org/psycopg3/docs/api/cursors.html) is available too.
-Because those come from psycopg unchanged, they keep psycopg's own calling
+everything else straight through to the asyncmy cursor. So the rest of
+asyncmy's [cursor
+API](https://www.asyncmy.org/asyncmy3/docs/api/cursors.html) is available too.
+Because those come from asyncmy unchanged, they keep asyncmy's own calling
 convention rather than being uniformly awaitable:
 
 - `scroll` and `close` — `await` them;
@@ -73,10 +73,10 @@ async with await connection.cursor() as cursor:
 
 ## Connection pooling
 
-Pooling requires the `pool` extra:
+Pooling is included in the package and is enabled with the database `OPTIONS`:
 
-```bash
-pip install django-async-backend[binary,pool]
+```python
+"OPTIONS": {"pool": {"minsize": 1, "maxsize": 10}}
 ```
 
 ```{warning}

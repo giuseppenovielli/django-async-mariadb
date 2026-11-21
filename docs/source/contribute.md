@@ -8,11 +8,11 @@ helps, and credit will always be given.
 ### Report bugs
 
 Report bugs at the
-[issue tracker](https://github.com/Arfey/django-async-backend/issues/new?template=bug_report.yml).
+[issue tracker](https://github.com/Arfey/django-async-mariadb/issues/new?template=bug_report.yml).
 
 The bug report form asks for everything needed to reproduce the problem:
 
-- your django-async-backend, Django, Python and PostgreSQL versions;
+- your django-async-mariadb, Django, Python and MariaDB versions;
 - whether you are running under ASGI or WSGI, and with or without connection
   pooling;
 - a minimal snippet that reproduces the problem;
@@ -21,7 +21,7 @@ The bug report form asks for everything needed to reproduce the problem:
 
 ### Fix bugs or implement features
 
-Anything in the [issue tracker](https://github.com/Arfey/django-async-backend/issues)
+Anything in the [issue tracker](https://github.com/Arfey/django-async-mariadb/issues)
 is open to whoever wants to pick it up — there is no formal triage or
 assignment process. If an issue looks interesting, comment on it to say you are
 working on it, so nobody duplicates the effort.
@@ -35,11 +35,11 @@ live in `docs/source/` and are written in Markdown (MyST).
 ### Submit feedback
 
 The best way to propose a feature is to
-[open a feature request](https://github.com/Arfey/django-async-backend/issues/new?template=feature_request.yml)
+[open a feature request](https://github.com/Arfey/django-async-mariadb/issues/new?template=feature_request.yml)
 that explains how it would work and keeps the scope as narrow as possible.
 
 For usage questions that are not bugs, use
-[Discussions](https://github.com/Arfey/django-async-backend/discussions).
+[Discussions](https://github.com/Arfey/django-async-mariadb/discussions).
 
 ## Install `lets`
 
@@ -97,17 +97,17 @@ Each task below also shows the equivalent raw command, so you can work without
 
 ## Get started
 
-Ready to contribute? Here's how to set up `django-async-backend` for local
+Ready to contribute? Here's how to set up `django-async-mariadb` for local
 development.
 
 You will need [Poetry](https://python-poetry.org/docs/#installation), Docker
-(the tests run against a real PostgreSQL instance) and Python 3.12+.
+(the tests run against a real MariaDB instance) and Python 3.10+.
 
 **1. Fork the repo** on GitHub, then clone your fork:
 
 ```bash
-git clone git@github.com:your_name_here/django-async-backend.git
-cd django-async-backend
+git clone git@github.com:your_name_here/django-async-mariadb.git
+cd django-async-mariadb
 ```
 
 **2. Install the dependencies**, including every extra:
@@ -117,10 +117,8 @@ poetry install --with dev,docs --all-extras
 ```
 
 ```{note}
-`--all-extras` pulls in `psycopg[binary]` and `psycopg[pool]`. Install them
-even if you do not plan to touch pooling: the test suite exercises the pooled
-code paths and imports `psycopg_pool` directly, so without the extras those
-tests fail outright rather than being skipped. `--with dev,docs` adds the test
+The main dependencies install `asyncmy` and PyMySQL. The test suite exercises
+both direct connections and pooled asyncmy connections. `--with dev,docs` adds the test
 tooling and the Sphinx toolchain, so you can build the docs locally too.
 ```
 
@@ -152,13 +150,13 @@ Before you submit, check that:
 ## Running tests
 
 This project uses a comprehensive test suite powered by `unittest`. Integration
-tests run locally against a real PostgreSQL instance.
+tests run locally against a real MariaDB instance.
 
 ```bash
 lets test
 ```
 
-`lets test` starts the PostgreSQL container if it isn't already running. To run
+`lets test` starts the MariaDB container if it isn't already running. To run
 a single module:
 
 ```bash
@@ -187,19 +185,19 @@ Runs all pre-commit hooks over the whole tree.
 
 ## Django's own test suite
 
-The `django_async_backend.db.backends.postgresql` backend is fully compatible
-with Django's default `django.db.backends.postgresql` backend, as it leverages
+The `django_async_mariadb.db.backends.mariadb` backend is fully compatible
+with Django's default `django.db.backends.mysql` backend, as it leverages
 the default implementation under the hood. To confirm this compatibility, run
 Django's test suite using the custom backend:
 
 ```python
 DATABASES = {
     "default": {
-        "ENGINE": "django_async_backend.db.backends.postgresql",
+        "ENGINE": "django_async_mariadb.db.backends.mariadb",
         ...
     },
     "other": {
-        "ENGINE": "django_async_backend.db.backends.postgresql",
+        "ENGINE": "django_async_mariadb.db.backends.mariadb",
         ...
     },
 }
@@ -212,7 +210,7 @@ lets test_django
 ```
 
 This builds the image and runs Django's suite in Docker, so it needs Docker
-running but no local PostgreSQL.
+running but no local MariaDB.
 
 ## Code generation
 
@@ -232,7 +230,7 @@ running codegen. They look hand-written but are not — each carries a header:
 
 `codemon/config/*.yaml` describes one generated module each. The filename
 mirrors the output path, so `db__models__query.yaml` produces
-`django_async_backend/db/models/query.py`, and its `pathname` key points at the
+`django_async_mariadb/db/models/query.py`, and its `pathname` key points at the
 matching file in Django's tree:
 
 ```yaml
@@ -240,7 +238,7 @@ pathname: db/models/query.py
 
 module:
   new_imports:
-    - "from django_async_backend.db.transaction import async_atomic"
+    - "from django_async_mariadb.db.transaction import async_atomic"
   classes:
     QuerySet:
       assigns:

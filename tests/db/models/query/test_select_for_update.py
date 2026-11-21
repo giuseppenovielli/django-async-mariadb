@@ -2,8 +2,8 @@ from django.db import DEFAULT_DB_ALIAS
 from django.db.transaction import TransactionManagementError
 from test_app.models import SaveModel
 
-from django_async_backend.db import async_connections
-from django_async_backend.test import (
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.test import (
     AsyncCaptureQueriesContext,
     AsyncioTestCase,
     AsyncioTransactionTestCase,

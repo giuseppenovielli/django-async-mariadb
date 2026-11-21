@@ -5,12 +5,12 @@ from test_app.models import (
     M2MTagModel,
 )
 
-from django_async_backend.db.models.manager import AsyncManager
-from django_async_backend.db.models.patch import (
+from django_async_mariadb.db.models.manager import AsyncManager
+from django_async_mariadb.db.models.patch import (
     _ASYNC_MIXIN_MEMBERS,
     _ORIGINAL_MODEL_ATTRS,
 )
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class PatchModelTest(SimpleTestCase):

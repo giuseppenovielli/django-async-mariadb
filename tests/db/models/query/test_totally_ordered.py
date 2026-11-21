@@ -13,8 +13,8 @@ from test_app.models import (
     TotalOrderingRefModel,
 )
 
-from django_async_backend.db.models.manager import AsyncManager
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.db.models.manager import AsyncManager
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class TestTotallyOrdered(AsyncioTestCase):

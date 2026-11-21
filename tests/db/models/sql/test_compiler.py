@@ -8,11 +8,11 @@ from test_app.models import (
     TestModel,
 )
 
-from django_async_backend.db.models.sql import (
+from django_async_mariadb.db.models.sql import (
     InsertQuery,
     UpdateQuery,
 )
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class TestQuoteName(AsyncioTestCase):

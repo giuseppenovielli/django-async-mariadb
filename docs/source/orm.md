@@ -13,8 +13,8 @@ boilerplate:
 
 ```python
 from django.db import models, DEFAULT_DB_ALIAS
-from django_async_backend.db import async_connections
-from django_async_backend.db.models.base import AsyncModelMixin
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.db.models.base import AsyncModelMixin
 
 
 class Book(AsyncModelMixin, models.Model):
@@ -108,8 +108,8 @@ of using `AsyncModelMixin`:
 
 ```python
 from django.db import models, DEFAULT_DB_ALIAS
-from django_async_backend.db import async_connections
-from django_async_backend.db.models.manager import AsyncManager
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.db.models.manager import AsyncManager
 
 
 class Book(models.Model):
@@ -137,7 +137,7 @@ That lookup is cached, so it only touches the database when the cache is cold.
 the assignment is served from cache:
 
 ```python
-from django_async_backend.utils.contenttypes import aget_for_model
+from django_async_mariadb.utils.contenttypes import aget_for_model
 
 await aget_for_model(SaveModel)      # warms ContentType's cache
 
@@ -266,4 +266,4 @@ Not supported ❌ — `instance.<related>.all()` is the sync ORM. See
 
 ### Databases
 
-Only **PostgreSQL** is supported, through {pypi}`psycopg` 3.
+Only **MariaDB** is supported, through {pypi}`asyncmy`.

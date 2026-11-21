@@ -6,12 +6,12 @@ module:
     - "from django.db.models import deletion as django_deletion"
     - "from django.db.models.deletion import ProtectedError"
     - "from django.db.models.deletion import RestrictedError"
-    - "from django_async_backend.db import async_connections"
-    - "from django_async_backend.db.transaction import async_atomic"
-    - "from django_async_backend.db.transaction import async_mark_for_rollback_on_error"
-    - "from django_async_backend.db.models import sql"
-    - "from django_async_backend.db.models.query import QuerySet"
-    - "from django_async_backend.utils.contenttypes import aget_for_model"
+    - "from django_async_mariadb.db import async_connections"
+    - "from django_async_mariadb.db.transaction import async_atomic"
+    - "from django_async_mariadb.db.transaction import async_mark_for_rollback_on_error"
+    - "from django_async_mariadb.db.models import sql"
+    - "from django_async_mariadb.db.models.query import QuerySet"
+    - "from django_async_mariadb.utils.contenttypes import aget_for_model"
 
   add_raw_bottom:
     - "_SYNC_CASCADE = django_deletion.CASCADE"

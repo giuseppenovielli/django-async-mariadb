@@ -1,7 +1,7 @@
 from django.db import DatabaseError
 from test_app.models import TestModel
 
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class OverriddenFeatures:
@@ -39,7 +39,7 @@ class TestCombinatorRejectsSlicingAndOrdering(AsyncioTestCase):
     """get_combinator_sql() refuses slicing and ordering on the parts of a
     combined query when the backend cannot support them there.
 
-    PostgreSQL can, so these guards only run with
+    MariaDB can, so these guards only run with
     supports_slicing_ordering_in_compound overridden.
     """
 
@@ -102,7 +102,7 @@ class TestCombinatorRejectsSlicingAndOrdering(AsyncioTestCase):
         self.assertNotIn("ORDER BY", compiler.as_sql()[0])
 
     async def test_supported_backend_allows_ordered_parts(self):
-        # The same query compiles fine on PostgreSQL's real feature flags,
+        # The same query compiles fine on MariaDB's real feature flags,
         # confirming the guard is what rejects it above.
         queryset = TestModel.async_objects.order_by("name")
         other = TestModel.async_objects.filter(value=1)

@@ -7,8 +7,8 @@ from django.db import (
 )
 from test_app.models import TestModel
 
-from django_async_backend.db.models.query import BaseIterable
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.db.models.query import BaseIterable
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class TestAinBulk(AsyncioTestCase):

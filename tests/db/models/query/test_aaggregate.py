@@ -14,7 +14,7 @@ from test_app.models import (
     TotalOrderingCompositePkModel,
 )
 
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class TestAAggregate(AsyncioTestCase):

@@ -5,8 +5,8 @@ from django.db.models import (
 )
 from test_app.models import TestModel
 
-from django_async_backend.db.models.sql.query import Query as AsyncQuery
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.db.models.sql.query import Query as AsyncQuery
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class TestQuerySetResolveExpression(AsyncioTestCase):

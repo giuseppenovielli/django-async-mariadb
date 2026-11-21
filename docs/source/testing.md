@@ -5,7 +5,7 @@
 Use for async tests that do **not** require database transactions.
 
 ```python
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class MyAsyncTests(AsyncioTestCase):
@@ -26,7 +26,7 @@ Use for async tests that need database transaction support (rollbacks, atomic
 blocks).
 
 ```python
-from django_async_backend.test import AsyncioTransactionTestCase
+from django_async_mariadb.test import AsyncioTransactionTestCase
 
 
 class MyTransactionTests(AsyncioTransactionTestCase):
@@ -48,11 +48,11 @@ Both test cases close every configured async connection during teardown.
 
 Django's `@override_settings` only accepts `SimpleTestCase` subclasses, so it
 raises `ValueError` on the async test cases. Import it from
-`django_async_backend.test` instead — same API, and it also works on Django's
+`django_async_mariadb.test` instead — same API, and it also works on Django's
 own test cases, so a module can use the one import for both:
 
 ```python
-from django_async_backend.test import AsyncioTestCase, override_settings
+from django_async_mariadb.test import AsyncioTestCase, override_settings
 
 
 @override_settings(SOME_SETTING="value")

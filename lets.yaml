@@ -34,7 +34,7 @@ commands:
     env:
       SKIP: flake8
     cmd: |
-      generated=$(sed -n 's|^pathname: *|django_async_backend/|p' codemon/config/*.yaml)
+      generated=$(sed -n 's|^pathname: *|django_async_mariadb/|p' codemon/config/*.yaml)
 
       [ -n "$generated" ] || {
         echo "❌ no 'pathname:' entries found in codemon/config/*.yaml" >&2

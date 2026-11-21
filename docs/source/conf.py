@@ -11,16 +11,16 @@ sys.path.insert(0, os.path.abspath("./"))
 from theme_config import *  # noqa: E402,F401,F403
 
 master_doc = "index"
-project = "django-async-backend"
-copyright = "2025, Arfey"
-author = "Arfey"
+project = "django-async-mariadb"
+copyright = "2025, Arfey and GiuseppeNovieli"
+author = "Arfey and GiuseppeNovieli"
 description = (
-    "True async Django ORM and PostgreSQL backend with connection "
+    "True async Django ORM and MariaDB backend with connection "
     "pooling and async transactions"
 )
 
 try:
-    release = metadata.version("django-async-backend")
+    release = metadata.version("django-async-mariadb")
 except metadata.PackageNotFoundError:  # pragma: no cover - docs-only path
     release = "unknown"
 
@@ -28,7 +28,7 @@ version = release
 
 html_static_path = ["./_static"]
 html_css_files = ["custom.css"]
-html_baseurl = "https://django-async-backend.readthedocs.io/"
+html_baseurl = "https://django-async-mariadb.readthedocs.io/"
 sitemap_url_scheme = "en/stable/{link}"
 html_title = (
     f"{project} <small><b style='color: var(--color-brand-primary)'>"
@@ -75,7 +75,7 @@ extlinks = {
     "djangodoc": ("https://docs.djangoproject.com/en/stable/%s", "%s"),
 }
 
-issues_github_path = "Arfey/django-async-backend"
+issues_github_path = "giuseppenovielli/django_async_mariadb"
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
@@ -83,7 +83,7 @@ intersphinx_mapping = {
         "https://docs.djangoproject.com/en/stable/",
         "https://docs.djangoproject.com/en/stable/_objects/",
     ),
-    "psycopg": ("https://www.psycopg.org/psycopg3/docs/", None),
+    "asyncmy": ("https://github.com/long2ice/asyncmy", None),
 }
 
 htmlhelp_basename = "djangoasyncbackenddoc"
@@ -91,8 +91,8 @@ latex_elements: dict[str, str] = {}
 latex_documents = [
     (
         master_doc,
-        "django-async-backend.tex",
-        "django-async-backend Documentation",
+        "django-async-mariadb.tex",
+        "django-async-mariadb Documentation",
         author,
         "manual",
     ),
@@ -100,8 +100,8 @@ latex_documents = [
 man_pages = [
     (
         master_doc,
-        "django-async-backend",
-        "django-async-backend Documentation",
+        "django-async-mariadb",
+        "django-async-mariadb Documentation",
         [author],
         1,
     )

@@ -9,7 +9,7 @@ from django.db import (
     models,
 )
 
-import django_async_backend.db.models.base
+import django_async_mariadb.db.models.base
 
 
 class Migration(migrations.Migration):
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 "db_table": "parent_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -62,7 +62,7 @@ class Migration(migrations.Migration):
                 "db_table": "db_default_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
                 "get_latest_by": "id",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -108,7 +108,7 @@ class Migration(migrations.Migration):
                 "db_table": "order_parent_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
                 "db_table": "pk_only_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -151,7 +151,7 @@ class Migration(migrations.Migration):
                 "db_table": "save_parent_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -174,7 +174,7 @@ class Migration(migrations.Migration):
                 "db_table": "save_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -198,7 +198,7 @@ class Migration(migrations.Migration):
                 "select_on_save": True,
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -220,7 +220,7 @@ class Migration(migrations.Migration):
                 "db_table": "uuid_pk_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -272,7 +272,7 @@ class Migration(migrations.Migration):
                 "db_table": "generic_fk_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -333,7 +333,7 @@ class Migration(migrations.Migration):
                 "db_table": "related_save_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -376,7 +376,7 @@ class Migration(migrations.Migration):
                 "db_table": "test_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -406,7 +406,7 @@ class Migration(migrations.Migration):
                 "order_with_respect_to": "parent",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -429,7 +429,7 @@ class Migration(migrations.Migration):
                 "db_table": "get_or_create_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -450,7 +450,7 @@ class Migration(migrations.Migration):
                 "db_table": "db_default_pk_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -472,7 +472,7 @@ class Migration(migrations.Migration):
                 "db_table": "m2m_tag_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -500,7 +500,7 @@ class Migration(migrations.Migration):
                 "db_table": "m2m_owner_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -522,7 +522,7 @@ class Migration(migrations.Migration):
                 "db_table": "async_on_delete_parent_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -545,7 +545,7 @@ class Migration(migrations.Migration):
                 "db_table": "delete_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -567,7 +567,7 @@ class Migration(migrations.Migration):
                 "db_table": "fast_delete_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -589,7 +589,7 @@ class Migration(migrations.Migration):
                 "db_table": "sync_on_delete_parent_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -620,7 +620,7 @@ class Migration(migrations.Migration):
                 "db_table": "async_on_delete_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -650,7 +650,7 @@ class Migration(migrations.Migration):
                 "db_table": "cascade_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -682,7 +682,7 @@ class Migration(migrations.Migration):
                 "db_table": "do_nothing_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -712,7 +712,7 @@ class Migration(migrations.Migration):
                 "db_table": "protect_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -751,7 +751,7 @@ class Migration(migrations.Migration):
                 "db_table": "restrict_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -782,7 +782,7 @@ class Migration(migrations.Migration):
                 "db_table": "set_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -814,7 +814,7 @@ class Migration(migrations.Migration):
                 "db_table": "set_default_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -845,7 +845,7 @@ class Migration(migrations.Migration):
                 "db_table": "set_null_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -876,7 +876,7 @@ class Migration(migrations.Migration):
                 "db_table": "sync_on_delete_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -898,7 +898,7 @@ class Migration(migrations.Migration):
                 "db_table": "generic_relation_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -928,7 +928,7 @@ class Migration(migrations.Migration):
                 "db_table": "generic_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -961,7 +961,7 @@ class Migration(migrations.Migration):
                 "db_table": "set_callable_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -992,7 +992,7 @@ class Migration(migrations.Migration):
                 "db_table": "multi_level_delete_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -1023,7 +1023,7 @@ class Migration(migrations.Migration):
                 "db_table": "multi_level_set_null_child_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -1066,7 +1066,7 @@ class Migration(migrations.Migration):
                 "db_table": "keep_parents_parent_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),
@@ -1117,7 +1117,7 @@ class Migration(migrations.Migration):
                 "db_table": "keep_parents_ref_model",
             },
             bases=(
-                django_async_backend.db.models.base.AsyncModelMixin,
+                django_async_mariadb.db.models.base.AsyncModelMixin,
                 models.Model,
             ),
         ),

@@ -10,10 +10,10 @@ import django
 from django.db import DEFAULT_DB_ALIAS
 from django.test.utils import override_settings
 
-from django_async_backend.db import async_connections
-from django_async_backend.db.backends.base.base import BaseAsyncDatabaseWrapper
-from django_async_backend.db.transaction import async_atomic
-from django_async_backend.test import (
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.db.backends.base.base import BaseAsyncDatabaseWrapper
+from django_async_mariadb.db.transaction import async_atomic
+from django_async_mariadb.test import (
     AsyncioTestCase,
     AsyncioTransactionTestCase,
 )
@@ -24,7 +24,7 @@ async def create_table():
         await cursor.execute(
             """
             CREATE TABLE reporter_table_tmp (
-                id SERIAL PRIMARY KEY,
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL UNIQUE
             );
             """

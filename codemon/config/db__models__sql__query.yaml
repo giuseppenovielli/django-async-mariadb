@@ -3,7 +3,7 @@ pathname: db/models/sql/query.py
 
 module:
   new_imports:
-    - "from django_async_backend.db import async_connections as connections"
+    - "from django_async_mariadb.db import async_connections as connections"
 
   import_aliases:
     - name: connections
@@ -18,7 +18,7 @@ module:
           to_async: true
           add_raw_top:
             - |
-              from django_async_backend.db.models.sql.subqueries import (
+              from django_async_mariadb.db.models.sql.subqueries import (
                   AggregateQuery,
               )
           calls:

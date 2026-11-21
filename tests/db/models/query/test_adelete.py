@@ -31,13 +31,13 @@ from test_app.models import (
     TestModel,
 )
 
-from django_async_backend.db import async_connections
-from django_async_backend.db.models.deletion import (
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.db.models.deletion import (
     _DO_NOTHING,
     Collector,
     _resolve_async_on_delete,
 )
-from django_async_backend.test import (
+from django_async_mariadb.test import (
     AsyncCaptureQueriesContext,
     AsyncioTestCase,
 )

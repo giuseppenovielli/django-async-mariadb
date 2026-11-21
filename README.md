@@ -1,25 +1,25 @@
-# Async Django ORM (Django Async Backend)
+# Async Django ORM for MariaDB
 
-[![CI status](https://img.shields.io/github/actions/workflow/status/Arfey/django-async-backend/test.yml?logo=github&style=for-the-badge&labelColor=%23282828)](https://github.com/Arfey/django-async-backend/actions)
-[![Latest Version in PyPI](https://img.shields.io/pypi/v/django-async-backend.svg?style=for-the-badge)](https://pypi.org/project/django-async-backend/)
-[![Supported Python versions](https://img.shields.io/pypi/pyversions/django-async-backend.svg?style=for-the-badge)](https://pypi.org/project/django-async-backend/)
+[![CI status](https://img.shields.io/github/actions/workflow/status/giuseppenovielli/django_async_mariadb/test.yml?logo=github&style=for-the-badge&labelColor=%23282828)](https://github.com/giuseppenovielli/django_async_mariadb/actions)
+[![Latest Version in PyPI](https://img.shields.io/pypi/v/django-async-mariadb.svg?style=for-the-badge)](https://pypi.org/project/django-async-mariadb/)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/django-async-mariadb.svg?style=for-the-badge)](https://pypi.org/project/django-async-mariadb/)
 
-[![Monthly downloads](https://static.pepy.tech/personalized-badge/django-async-backend?period=month&units=international_system&left_color=grey&right_color=blue&left_text=downloads/month)](https://pepy.tech/projects/django-async-backend)
+[![Monthly downloads](https://static.pepy.tech/personalized-badge/django-async-mariadb?period=month&units=international_system&left_color=grey&right_color=blue&left_text=downloads/month)](https://pepy.tech/projects/django-async-mariadb)
 
-Async Django ORM and PostgreSQL database backend.
+Async Django ORM and MariaDB database backend.
 
 Django's `a`-prefixed ORM methods (`aget`, `acreate`, …) are thin
 `sync_to_async` wrappers: the query still runs on a threadpool, on a
-synchronous connection. **django-async-backend** replaces the database layer
+synchronous connection. **django-async-mariadb** replaces the database layer
 itself, so queries are issued on a real asyncio connection through
-[psycopg](https://www.psycopg.org/psycopg3/) 3, with async transactions, async
+[asyncmy](https://github.com/long2ice/asyncmy), with async transactions, async
 cursors and optional connection pooling — no thread emulation.
 
 The project is **production ready**: the API is stable, and each release is
 pinned to the Django feature release it was generated against, so upgrades stay
 predictable.
 
-📖 **[Read the documentation](https://django-async-backend.readthedocs.io/en/latest/)**
+📖 **[Read the documentation](docs/source/index.md)**
 
 ---
 
@@ -28,17 +28,17 @@ predictable.
 The package tracks Django's major and minor version, so the release you install
 is pinned to the Django feature release it was generated against.
 
-| django-async-backend | Django  |
+| django-async-mariadb | Django  |
 | -------------------- | ------- |
 | `5.2.x`              | `5.2.x` |
 
 Part of the ORM layer is generated from Django's own source, so a Django feature
-release gets a matching django-async-backend feature release rather than a
+release gets a matching django-async-mariadb feature release rather than a
 loosened version range. Patch releases within a line are ordinary bugfix
 releases and are safe to upgrade to.
 
 > [!IMPORTANT]
-> **Run this under ASGI.** django-async-backend is developed for ASGI, and that
+> **Run this under ASGI.** django-async-mariadb is developed for ASGI, and that
 > is the only mode it is supported in. Under WSGI — including the Django
 > development server — it behaves inconsistently, because WSGI creates a new
 > event loop for each request and the async connection state cannot be managed
@@ -48,16 +48,12 @@ releases and are safe to upgrade to.
 ## Installation
 
 ```bash
-pip install django-async-backend[binary]
+pip install django-async-mariadb
 ```
 
-The `binary` extra installs the C-accelerated `psycopg` implementation. Without
-it you get the pure-Python implementation, which is noticeably slower. If you
-use connection pooling, add the `pool` extra as well:
-
-```bash
-pip install django-async-backend[binary,pool]
-```
+The package uses `asyncmy` for asynchronous connections and PyMySQL as the
+synchronous fallback. Connection pooling is enabled through the database
+`OPTIONS` setting.
 
 The package tracks Django's major and minor version — this line targets Django
 `5.2.x` — because a large part of the ORM layer is generated from
@@ -69,22 +65,22 @@ Django's own source.
 # settings.py
 DATABASES = {
     "default": {
-        "ENGINE": "django_async_backend.db.backends.postgresql",
+        "ENGINE": "django_async_mariadb.db.backends.mariadb",
         ...
     },
 }
 
 INSTALLED_APPS = [
     ...
-    "django_async_backend",
+    "django_async_mariadb",
 ]
 ```
 
 ```python
 from django.db import models
-from django_async_backend.db import async_connections
-from django_async_backend.db.models.base import AsyncModelMixin
-from django_async_backend.db.transaction import async_atomic
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.db.models.base import AsyncModelMixin
+from django_async_mariadb.db.transaction import async_atomic
 
 
 class Book(AsyncModelMixin, models.Model):

@@ -8,8 +8,8 @@ from django.test import AsyncRequestFactory
 from django.urls import path
 from test_app.models import TestModel
 
-from django_async_backend.db import async_connections
-from django_async_backend.test import (
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.test import (
     AsyncioTransactionTestCase,
     override_settings,
 )

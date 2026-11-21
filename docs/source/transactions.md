@@ -7,7 +7,7 @@ rolled back.
 ## Basic usage
 
 ```python
-from django_async_backend.db.transaction import async_atomic
+from django_async_mariadb.db.transaction import async_atomic
 
 async with async_atomic():
     await create_instance(1)
@@ -132,7 +132,7 @@ You can register a callback to run after a successful transaction commit using
 
 ```python
 from django.db import DEFAULT_DB_ALIAS
-from django_async_backend.db import async_connections
+from django_async_mariadb.db import async_connections
 
 connection = async_connections[DEFAULT_DB_ALIAS]
 

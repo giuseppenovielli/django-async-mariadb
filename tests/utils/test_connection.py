@@ -6,7 +6,7 @@ from django.test import SimpleTestCase
 from django.test.utils import override_settings
 from django.utils.connection import ConnectionDoesNotExist
 
-from django_async_backend.utils.connection import BaseAsyncConnectionHandler
+from django_async_mariadb.utils.connection import BaseAsyncConnectionHandler
 
 default_settings = {
     "first": {

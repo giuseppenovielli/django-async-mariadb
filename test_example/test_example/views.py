@@ -7,7 +7,7 @@ from django.http import (
     HttpResponse,
 )
 
-from django_async_backend.db import async_connections
+from django_async_mariadb.db import async_connections
 
 
 async def index(request: HttpRequest) -> HttpResponse:

@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, patch
 
 from django.test import SimpleTestCase
 
-from django_async_backend.db import (
+from django_async_mariadb.db import (
     async_connections,
     close_old_async_connections,
 )

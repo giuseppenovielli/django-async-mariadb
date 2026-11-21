@@ -16,9 +16,9 @@ from test_app.models import (
     UuidPkModel,
 )
 
-from django_async_backend.db import async_connections
-from django_async_backend.db.models.query import QuerySet
-from django_async_backend.test import AsyncioTestCase
+from django_async_mariadb.db import async_connections
+from django_async_mariadb.db.models.query import QuerySet
+from django_async_mariadb.test import AsyncioTestCase
 
 
 class SaveModelToOtherRouter:

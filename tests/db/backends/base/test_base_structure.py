@@ -4,7 +4,7 @@ import pathlib
 import libcst as cst
 from django.test import SimpleTestCase
 
-import django_async_backend.db.backends.base.base as base_module
+import django_async_mariadb.db.backends.base.base as base_module
 
 THREAD_GUARD = "validate_thread_sharing"
 TASK_GUARD = "validate_task_sharing"

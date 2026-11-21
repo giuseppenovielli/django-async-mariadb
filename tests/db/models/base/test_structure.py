@@ -4,7 +4,7 @@ import pathlib
 import libcst as cst
 from django.test import SimpleTestCase
 
-import django_async_backend.db.models.base as base_module
+import django_async_mariadb.db.models.base as base_module
 
 MIXIN = "AsyncModelMixin"
 
