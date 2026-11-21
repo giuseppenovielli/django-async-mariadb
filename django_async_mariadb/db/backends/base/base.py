@@ -157,7 +157,7 @@ class BaseAsyncDatabaseWrapper:
         if not settings.USE_TZ:
             return None
         elif self.settings_dict["TIME_ZONE"] is None:
-            return datetime.UTC
+            return datetime.timezone.utc
         else:
             return zoneinfo.ZoneInfo(self.settings_dict["TIME_ZONE"])
 

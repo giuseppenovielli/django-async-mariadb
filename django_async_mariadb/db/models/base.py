@@ -452,7 +452,7 @@ class AsyncModelMixin:
             results = await self._async_do_insert(
                 cls._async_base_manager,
                 using,
-                insert_fields,
+                fields,
                 returning_fields,
                 raw,
             )

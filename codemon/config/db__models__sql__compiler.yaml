@@ -149,3 +149,9 @@ module:
             - func:
                 attr: fetch_returned_rows
               replace_raw: await cursor.fetchall()
+            - func:
+                attr: fetch_returned_insert_rows
+              replace_raw: await cursor.fetchall()
+            - func:
+                attr: fetch_returned_insert_columns
+              replace_raw: await cursor.fetchone()

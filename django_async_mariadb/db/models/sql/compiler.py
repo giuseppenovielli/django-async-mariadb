@@ -1740,15 +1740,12 @@ class SQLInsertCompiler(SQLCompiler):
                 self.connection.features.can_return_rows_from_bulk_insert
                 and len(self.query.objs) > 1
             ):
-                rows = self.connection.ops.fetch_returned_insert_rows(cursor)
+                rows = await cursor.fetchall()
                 cols = [field.get_col(opts.db_table) for field in self.returning_fields]
             elif self.connection.features.can_return_columns_from_insert:
                 assert len(self.query.objs) == 1
                 rows = [
-                    self.connection.ops.fetch_returned_insert_columns(
-                        cursor,
-                        self.returning_params,
-                    )
+                    await cursor.fetchone()
                 ]
                 cols = [field.get_col(opts.db_table) for field in self.returning_fields]
             elif returning_fields and isinstance(
