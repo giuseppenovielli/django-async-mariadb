@@ -118,6 +118,10 @@ jobs:
       MARIADB_TEST_PASSWORD: root
       MARIADB_TEST_HOST: 127.0.0.1
       MARIADB_TEST_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
     strategy:
       fail-fast: true
       matrix:
